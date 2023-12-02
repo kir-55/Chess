@@ -42,14 +42,6 @@ int chessboard[8][8] = {
 };
 bool currentTurn = true;
 
-class Piece
-{
-    public:
-        std::string name;
-        std::string blackSpriteName, whiteSpriteName; // like "pawn.png"
-        char attackPattern = ' '; // allowed: |, -, ^, <, >, /, \, +, X
-        std::vector<int[2]> localAttackSpots;
-};
 
 bool positionExist(int x2, int y2) {
     if (x2 > -1 and x2 < boardSizeX and y2 > -1 and y2 < boardSizeY)
