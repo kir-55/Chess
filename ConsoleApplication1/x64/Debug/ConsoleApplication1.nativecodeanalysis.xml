@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\kudze\source\repos\Chess\Chess\SFML-2.6.1\include\SFML\Graphics\</FILEPATH>
+      <FILENAME>Glyph.hpp</FILENAME>
+      <LINE>49</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'sf::Glyph::lsbDelta' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>sf::Glyph::{ctor}</FUNCTION>
+    <DECORATED>??0Glyph@sf@@QEAA@XZ</DECORATED>
+    <FUNCLINE>49</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>sf::Glyph::lsbDelta</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\kudze\source\repos\Chess\Chess\SFML-2.6.1\include\SFML\Graphics\</FILEPATH>
+      <FILENAME>Glyph.hpp</FILENAME>
+      <LINE>49</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'sf::Glyph::rsbDelta' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>sf::Glyph::{ctor}</FUNCTION>
+    <DECORATED>??0Glyph@sf@@QEAA@XZ</DECORATED>
+    <FUNCLINE>49</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>sf::Glyph::rsbDelta</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>

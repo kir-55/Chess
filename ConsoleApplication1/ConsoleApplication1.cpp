@@ -1,13 +1,15 @@
 ﻿// ConsoleApplication1.cpp : Ten plik zawiera funkcję „main”. W nim rozpoczyna się i kończy wykonywanie programu.
 //
 
-#include <iostream>
+#define LOG(x) std::cout << x << std::endl;
+
 #include <stdlib.h> 
 #include <vector>
+#include <array>
 #include <string>
 #include <iostream>
 #include <SFML/Graphics.hpp>
-
+#include "Piece.h"
 
 
 using namespace sf;
@@ -30,6 +32,13 @@ const std::string ROOK_BLACK = "rook_black.png";
 const std::string QUEEN_BLACK = "queen_black.jpg";
 const std::string KING_BLACK = "king_black.png";
 
+const Piece PAWN{ "pawn", PAWN_WHITE, PAWN_BLACK, ' ', { {0,1}, {0,2} } };
+const Piece KING{ "king", KING_WHITE, KING_BLACK, ' ', { {0,1}, {1,0}, {-1, 0}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1} } };
+const Piece KNIGHT{ "knight", KNIGHT_WHITE, KNIGHT_BLACK, ' ', { {2,-1}, {2, 1}, {1,2 }, {-1, 2}, {-2, 1}, {-2, -1}, {-1,-2}, {1, -2} } };
+const Piece BISHOP{ "bishop", BISHOP_WHITE, BISHOP_BLACK, 'X' ,{} };
+const Piece QUEEN{ "queen", QUEEN_WHITE, QUEEN_BLACK, '*' ,{} };
+const Piece ROOK{ "rook", ROOK_WHITE, ROOK_WHITE, '+' ,{} };
+
 int chessboard[8][8] = {
     {-1, -2, -3, -4, -5, -3, -2, -1},
     {-6, -6, -6, -6, -6, -6, -6, -6},
@@ -41,7 +50,6 @@ int chessboard[8][8] = {
     { 1,  2,  3,  4,  5,  3,  2,  1}
 };
 bool currentTurn = true;
-
 
 bool positionExist(int x2, int y2) {
     if (x2 > -1 and x2 < boardSizeX and y2 > -1 and y2 < boardSizeY)
@@ -55,52 +63,61 @@ int getPiece(Vector2i position) {
     return 0;
 }
 
-std::string getPieceImageName(int piece) {
+Piece getPiece(int piece) {
     switch (piece) {
         case 1:
-            return ROOK_WHITE;
+            return ROOK;
         case 2:
-            return KNIGHT_WHITE;
+            return KNIGHT;
         case 3:
-            return BISHOP_WHITE;
+            return BISHOP;
         case 4:
-            return QUEEN_WHITE;
+            return QUEEN;
         case 5:
-            return KING_WHITE;
+            return KING;
         case 6:
-            return PAWN_WHITE;
-        case -1:
-            return ROOK_BLACK;
-        case -2:
-            return KNIGHT_BLACK;
-        case -3:
-            return BISHOP_BLACK;
-        case -4:
-            return QUEEN_BLACK;
-        case -5:
-            return KING_BLACK;
-        case -6:
-            return PAWN_BLACK;
-        default:
-            return "";
+            return PAWN;
     }
 }
 
-bool move(Vector2i from, Vector2i to) {
-    int currPiece = getPiece(from);
-    int targetPiece = getPiece(to);
+bool canMove(Vector2i from, Vector2i to) {
+    if (from == to)
+        return false;
 
-    std::cout << currPiece;
-    if (from != to
-        and (currentTurn? (currPiece > 0) : (currPiece < 0))
-        and (targetPiece == 0 or (currentTurn? (targetPiece < 0) : (targetPiece > 0))) ){
+    int currPieceId = getPiece(from);
+    int targetPieceId = getPiece(to);
+
+
+    bool rightPiecesColors = currentTurn ? (currPieceId > 0 and targetPieceId <= 0) : (currPieceId < 0 and targetPieceId >= 0);
+
+
+    if (rightPiecesColors) {
+        //checking if piece can move to the square
+        Piece piece = getPiece(abs(currPieceId));
+        for (array<int, 2> pos : piece.localAttackSpots)
+        {
+            Vector2i globalAttackSpot = (currPieceId>0? Vector2i{ from.x - pos[0], from.y - pos[1]} : Vector2i{pos[0] + from.x, pos[1] + from.y});
+            if (globalAttackSpot == to) {
+                return true;
+            }
+            else
+                LOG("X: " << globalAttackSpot.x << " Y: " << globalAttackSpot.y << " X: " << to.x << " Y: " << to.y);
+        }
+        return false;
+    }
+    else
+        LOG((currentTurn ? "White turn" : "Black turn"));
+    return false;
+}
+
+bool move(Vector2i from, Vector2i to) {
+    if (canMove(from, to)) {
+        int currPiece = getPiece(from);
         chessboard[from.y][from.x] = 0;
         chessboard[to.y][to.x] = currPiece;
         currentTurn = !currentTurn;
         return true;
     }
-    else
-        std::cout << std::endl << (currentTurn? "white turn" : "black turn") << std::endl;
     return false;
 }
 
@@ -110,11 +127,15 @@ int main()
     Color cellColor1(245, 222, 179);
     Color cellColor2(139, 69, 19);
 
-    RenderWindow window(VideoMode(800, 800), "SFML works!");
+    RenderWindow window(VideoMode(800, 800), "Chess");
 
     RectangleShape rectangle(Vector2f(100, 100));
     Vector2i selectedPos = Vector2i(-1, -1);
     Vector2i moveFrom = Vector2i(-1, -1);
+
+
+
+   // LOG(checkPiece(Pawn));
 
     while (window.isOpen())
     {
@@ -160,7 +181,10 @@ int main()
                 rectangle.setPosition(Vector2f(x * 100, y * 100));
                 window.draw(rectangle);
 
-                std::string pieceImgName = getPieceImageName(getPiece(Vector2i(x,y)));
+                //getting piece image
+                int pieceId = getPiece(Vector2i(x, y));
+                Piece piece = getPiece(abs(pieceId));
+                string pieceImgName = pieceId>0? piece.whiteSpriteName : piece.blackSpriteName;
 
                 if (pieceImgName != "") {
                     Sprite pieceSprite;

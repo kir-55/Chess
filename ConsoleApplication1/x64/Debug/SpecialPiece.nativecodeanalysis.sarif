@@ -1,0 +1,51 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.39.33218.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/consoleapplication1/specialpiece.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "bde74ea9aa6bd47f03a8f92524a7eef195fe9c8f967462c5a8f92d7e7cfa3ffe"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/consoleapplication1/specialpiece.h"
+          },
+          "hashes": {
+            "sha-256": "276791a7e3dfd7fe422620b4e4090018936b9b9918633a1a03e1f25a796cf816"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/consoleapplication1/piece.h"
+          },
+          "hashes": {
+            "sha-256": "464a16d62a17ffae938a4212e6ca44e73f3e8a5f80f5ac5004f22ebf0406b542"
+          }
+        }
+      ]
+    }
+  ]
+}

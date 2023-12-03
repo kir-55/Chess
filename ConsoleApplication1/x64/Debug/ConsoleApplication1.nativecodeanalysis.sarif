@@ -1,0 +1,721 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'sf::Glyph::lsbDelta' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/Users/kudze/source/repos/Chess/Chess/SFML-2.6.1/include/SFML/Graphics/Glyph.hpp"
+                },
+                "region": {
+                  "startLine": 49,
+                  "startColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sf::Glyph::{ctor}",
+                  "decoratedName": "??0Glyph@sf@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "sf::Glyph::lsbDelta"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'sf::Glyph::rsbDelta' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/Users/kudze/source/repos/Chess/Chess/SFML-2.6.1/include/SFML/Graphics/Glyph.hpp"
+                },
+                "region": {
+                  "startLine": 49,
+                  "startColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "sf::Glyph::{ctor}",
+                  "decoratedName": "??0Glyph@sf@@QEAA@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "sf::Glyph::rsbDelta"
+          }
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.39.33218.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///C:/Users/kudze/source/repos/Chess/Chess/SFML-2.6.1/include/SFML/Graphics/Glyph.hpp"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "ec279059872450fa3899e77fc577c5fae255c384af012b3db5b7b33b36ec5890"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/consoleapplication1/consoleapplication1.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "9848e666b60e2a160377bd1980e1455bdcecd7e697473f176c5b48af85d30dca"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics.hpp"
+          },
+          "hashes": {
+            "sha-256": "6a5831bcfe5bc4bdd62786d2768bcdced4b3230ffcdfdab4849976bdbfa3b1eb"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window.hpp"
+          },
+          "hashes": {
+            "sha-256": "85e34acd4c99810728b933bbc9a9f86ce4c14fa560fef9afd5482ac5d0452995"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system.hpp"
+          },
+          "hashes": {
+            "sha-256": "09bc2b32d9221b5b416725603a01a655299d568ed8e524ad0cdd501d6f70d7ba"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/config.hpp"
+          },
+          "hashes": {
+            "sha-256": "b6e069f711f071ca13e2c29f968b76c1d8821c861450ad3840964f8678942c03"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/clock.hpp"
+          },
+          "hashes": {
+            "sha-256": "abc79599d3723af2fd8c60023fe066fa2bbd3263bf801b0fb5f2b345c3adb4e1"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/export.hpp"
+          },
+          "hashes": {
+            "sha-256": "ae00bbdb837d29dca4d82d897fd57300e7542b19ac7d94b33e842aad64c5e07a"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/time.hpp"
+          },
+          "hashes": {
+            "sha-256": "b3705be72704b27b90ced1425d8555a1088ee51ba017d1588a7d57099d2953e6"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/err.hpp"
+          },
+          "hashes": {
+            "sha-256": "d1a867501781a36e3a58c89bb9aae6ab98f0a17a733f90827054fe886563a7fe"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/fileinputstream.hpp"
+          },
+          "hashes": {
+            "sha-256": "d0a5b82d07437e357ec4942937abeca5089df446dfa2c24378982aba6ac22088"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/inputstream.hpp"
+          },
+          "hashes": {
+            "sha-256": "262325203eb98a90eb9ccef604034eae7db71bc9647392ac508b43da1a028220"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/noncopyable.hpp"
+          },
+          "hashes": {
+            "sha-256": "d08bbf1f7018134c2784bc95e133f68d0646d3bce194046bb0db9e02c97b357c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/lock.hpp"
+          },
+          "hashes": {
+            "sha-256": "53344c87f4b2e23dac2e18724edeff4d57aa15504bc2b16886f2f3655209629b"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/memoryinputstream.hpp"
+          },
+          "hashes": {
+            "sha-256": "65523608563a536bbc4bb267812974784082ccab6a2e6f095a63d60210e78976"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/mutex.hpp"
+          },
+          "hashes": {
+            "sha-256": "2402729f5756b7c9ea0616cec03862e0e7689b7cc8c33894a574466a9a0c4825"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/sleep.hpp"
+          },
+          "hashes": {
+            "sha-256": "f983a0269b5cfa423a9c4434025fd01caa6d793dffaf780a598ed2fa469b7672"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/string.hpp"
+          },
+          "hashes": {
+            "sha-256": "5ef3415df60dafd46ddfa5ba57a0b6d7331a643986b6875761d9846437dca2c9"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/utf.hpp"
+          },
+          "hashes": {
+            "sha-256": "63c11bca4545fd490b2788421623ac87c1cda76d2f40726e495efce89db4332d"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/utf.inl"
+          },
+          "hashes": {
+            "sha-256": "577ed3b6eea533f1d2fd767cf8b52ca49f9fd04b2f4e2c10123789011f4dd7e5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/string.inl"
+          },
+          "hashes": {
+            "sha-256": "7c1349a61ced7e8bf3d1ed5cd8583709e93d6277608f5f8f3a602a291d02d836"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/thread.hpp"
+          },
+          "hashes": {
+            "sha-256": "82e34053cfba9d4e606f46fab89a4cc02a5770490f8054aac6c2a71aca4831cf"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/thread.inl"
+          },
+          "hashes": {
+            "sha-256": "7abbcc73bb4635e3e9953aec5718e9b3570bdaba61788aa8522615c7e440f2e8"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/threadlocal.hpp"
+          },
+          "hashes": {
+            "sha-256": "b0f772c1c1678e14617d91178137d68c57fbcd2c2dc6e56a366aaf254451cf6e"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/threadlocalptr.hpp"
+          },
+          "hashes": {
+            "sha-256": "68b25d6f888ec2e69a1a19b426eb9f633e32ab2d41b7e17bebfa5d2d2b1a6c6a"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/threadlocalptr.inl"
+          },
+          "hashes": {
+            "sha-256": "cd25f6d487246ff7fdb2df5401ccc951bc632b639c02c744cd42550751e5055a"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/vector2.hpp"
+          },
+          "hashes": {
+            "sha-256": "3271f8eaac3f1d262878fbb14cdd4dbeb1cd329b80577515513f4f7c45c05fb2"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/vector2.inl"
+          },
+          "hashes": {
+            "sha-256": "70d8e5ca6dc3aa99b92533bc231e3d556c953b4fba2c0ae064b5b8454ff838d9"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/vector3.hpp"
+          },
+          "hashes": {
+            "sha-256": "1d12bd3444004080569b91293923848c8ce8feb8f31cf16f81ba9067cff023de"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/system/vector3.inl"
+          },
+          "hashes": {
+            "sha-256": "7b9be1d5967cce700b29d1a61905e2493a1b3b126bf7b8c7f88c5391059bc052"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/clipboard.hpp"
+          },
+          "hashes": {
+            "sha-256": "5f9e63354233d6333b2b60ae1ed6f582cd29b7f2623c4b05ccb0fc2e9f93eb20"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/export.hpp"
+          },
+          "hashes": {
+            "sha-256": "997ad366b5a6cc230839a9cfc3aa6a3c6dccb9df4e38a7eccc26a0924f1f92b8"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/context.hpp"
+          },
+          "hashes": {
+            "sha-256": "0c0cbb81ffe73de559d26bb4e368fd9cb5311b8b195214566f5057bb7a388580"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/glresource.hpp"
+          },
+          "hashes": {
+            "sha-256": "435ab868713d09b67db6da23064c29ae5727181161ad27402b93ac5408d82f39"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/contextsettings.hpp"
+          },
+          "hashes": {
+            "sha-256": "82a21bdd5e7d549c4c6450f5757ae829bf004eb4ee1cbb50288ed0d35d1cf1ec"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/cursor.hpp"
+          },
+          "hashes": {
+            "sha-256": "816c93682afab8faef09339ebb46c24030e9f649771cfcb6070fb4f331203471"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/event.hpp"
+          },
+          "hashes": {
+            "sha-256": "58403363c6b4b5dd3fe311faf724615eb3522cbb2eeff9ee0c777a159d117e25"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/joystick.hpp"
+          },
+          "hashes": {
+            "sha-256": "279ccdebf62993376575ecba9b8d7475cd8b0b4d9b5cf19a12f062a27a0f7c06"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/keyboard.hpp"
+          },
+          "hashes": {
+            "sha-256": "f31958d337b37b5abfb10974b96c026ecc87878ffdb70a9ff58b3282d0009718"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/mouse.hpp"
+          },
+          "hashes": {
+            "sha-256": "335614237fa450e2b37172cc0eb23a2b934b36bc8f0030605316de86c567c48c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/sensor.hpp"
+          },
+          "hashes": {
+            "sha-256": "fc5f7cb31e6c0b8433de6ab75eb4099e01bc5e3d7821f55e7a41b538da18547c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/touch.hpp"
+          },
+          "hashes": {
+            "sha-256": "432e3b73186f9dde01f3e8fedef81f07b5c662c3569cfc36aa1a4e4173b05561"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/videomode.hpp"
+          },
+          "hashes": {
+            "sha-256": "b6e3498a8293cbfdee3d26062a463d21b90b635d0bd55763760ba7f9e3da15cf"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/window.hpp"
+          },
+          "hashes": {
+            "sha-256": "5be09caed9f4a112626dc8cf38bd3e50efc32d294deb6bfae53d9cdc54e25b67"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/windowbase.hpp"
+          },
+          "hashes": {
+            "sha-256": "55fb0dfc3e3c6317c6ae03af8940a0d05af70e74734db71186d94e0972d359fb"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/vulkan.hpp"
+          },
+          "hashes": {
+            "sha-256": "10050b1f484dc4962523ac614883ed00863a18d98cdeb096bbf465d318389fa2"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/windowhandle.hpp"
+          },
+          "hashes": {
+            "sha-256": "71221fd76c9a7fd0eee2eb8c1030ef725b1f9bdb9c4960982ee671d137790701"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/window/windowstyle.hpp"
+          },
+          "hashes": {
+            "sha-256": "1ebb3b7e8d4570238826dafde15da8ddc4a282db644c9c1d06e6be35cca460ab"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/blendmode.hpp"
+          },
+          "hashes": {
+            "sha-256": "75f234bafdfec276b47f7da78261d65589d02a31f6ce0ddf6b844d6dc42f2cf2"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/export.hpp"
+          },
+          "hashes": {
+            "sha-256": "e83796cd71dda9f8a86ab538350dc5cb92550537b180a4d6a972cbf96d75033e"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/circleshape.hpp"
+          },
+          "hashes": {
+            "sha-256": "a82c368d7547a3a8244f7fc0d3807bc590dd47a78c0dd717fb9213ba931be3de"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/shape.hpp"
+          },
+          "hashes": {
+            "sha-256": "0a9d173fc51227adc5356d5c8c05a3d54e267f27bbcb5e77486040c77dd6da1d"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/drawable.hpp"
+          },
+          "hashes": {
+            "sha-256": "bff6082e49cc7018f3818193166d8c488e5dcd61cce1ac78432375b6edc3af91"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/renderstates.hpp"
+          },
+          "hashes": {
+            "sha-256": "3d46c253c04e0726dd8782011f89486c8637b30f6dc564d3064408e2168055e5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/transform.hpp"
+          },
+          "hashes": {
+            "sha-256": "49def6ed9e5f6b831d6aab3a9c3d1fd5e6a5408166177855af0fac9dcc3c4507"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/rect.hpp"
+          },
+          "hashes": {
+            "sha-256": "14da874c46ae2ffb97b367eee5b044ffd28f5f220304855a7bf50d70837c81d4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/rect.inl"
+          },
+          "hashes": {
+            "sha-256": "44e4087b4adb38db3b9cce03138c3614f38cf38ae9e1fe9a7dfb89d277f948cb"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/transformable.hpp"
+          },
+          "hashes": {
+            "sha-256": "9579b222e2f54c567d6718c10ddcda61c0bce4fbfcb1ae80df91cc026ee7d787"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/vertexarray.hpp"
+          },
+          "hashes": {
+            "sha-256": "0883fad5da96200ac9ef27c0e7dc6612947aebd69ddea95b0404596add9a399b"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/vertex.hpp"
+          },
+          "hashes": {
+            "sha-256": "9311ff50c28dadcd88567ee73233fee8d6f903c007ae692f79d18c2031ccee77"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/color.hpp"
+          },
+          "hashes": {
+            "sha-256": "67dd0d6c7948848cf371b542bff7d32f882dbfa055ffd14635441c2d1587bc3f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/primitivetype.hpp"
+          },
+          "hashes": {
+            "sha-256": "9f036a2cfa194645cb51e7752ed324d749fa3c5254b096c1a51981b0d142fe05"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/convexshape.hpp"
+          },
+          "hashes": {
+            "sha-256": "6c733e6bc37816d1244154598a5ad3a49b4e529341e882faf6ee96b064877782"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/font.hpp"
+          },
+          "hashes": {
+            "sha-256": "7382f00c68c8b73ee305bf8e6a3e83445df68cb481b91918fe91a570b38c48cf"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/texture.hpp"
+          },
+          "hashes": {
+            "sha-256": "6e3c70021acf741dffdf168a3396a98e2a24faa602e6eeadfc97813857ecbccf"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/image.hpp"
+          },
+          "hashes": {
+            "sha-256": "e10d8694fc7a2061f1749400bf6f4d753fdfbb2863d4c2ec760eeb232a4430f7"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/rectangleshape.hpp"
+          },
+          "hashes": {
+            "sha-256": "aae32de8899011a3f0d0ffa0c1949e64a2c89d6a8b2aef1b8ab4d814566693f3"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/rendertarget.hpp"
+          },
+          "hashes": {
+            "sha-256": "b218d0527e5bf87c0fbb257583ceb78958f0b8708c6a59730c933db9554af83a"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/view.hpp"
+          },
+          "hashes": {
+            "sha-256": "cdf16bd4d387c00890b91c88a8201e22827c247eac1c6b68e175d4f6258db9b1"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/rendertexture.hpp"
+          },
+          "hashes": {
+            "sha-256": "76e52bdb3ed2604b96e34d2bd288cd846ee111c8da8bf071572b1cbf21cf24bf"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/renderwindow.hpp"
+          },
+          "hashes": {
+            "sha-256": "91fa0f87b6fdd191ec487494f9c4478c386a1345fbb5e65b491ab3e0d99e5197"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/shader.hpp"
+          },
+          "hashes": {
+            "sha-256": "17b43711e1c1e86bab79ee930bf46a5ea2dd886c58b2eb12a36ec66a78a7a00f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/glsl.hpp"
+          },
+          "hashes": {
+            "sha-256": "b136e3825900c2504187cef955d846710d5967e995ef21d9dbe39cac31af9f83"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/glsl.inl"
+          },
+          "hashes": {
+            "sha-256": "91e7960435ab7b9eeedd4cd31151a5f84c24e1ff3a0b8e2759f87f474a083a3a"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/sprite.hpp"
+          },
+          "hashes": {
+            "sha-256": "441256c062dffe707f05cfb32fb098d9f00955816c10e5fd7b75e044bd967bec"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/text.hpp"
+          },
+          "hashes": {
+            "sha-256": "17ccdade1df21f0f54bad004e3fe0e3e17ad0cc1b1c4e8d9f66f75c3a33cd27c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/sfml-2.6.1/include/sfml/graphics/vertexbuffer.hpp"
+          },
+          "hashes": {
+            "sha-256": "2392c9bb605a5b570554b75654c74b37dc9352dcdbc0a4bc9848d7a46608d12c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/consoleapplication1/piece.h"
+          },
+          "hashes": {
+            "sha-256": "464a16d62a17ffae938a4212e6ca44e73f3e8a5f80f5ac5004f22ebf0406b542"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/kudze/source/repos/chess/chess/consoleapplication1/specialpiece.h"
+          },
+          "hashes": {
+            "sha-256": "276791a7e3dfd7fe422620b4e4090018936b9b9918633a1a03e1f25a796cf816"
+          }
+        }
+      ]
+    }
+  ]
+}
