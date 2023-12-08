@@ -14,8 +14,6 @@
 
 using namespace sf;
 
-
-
 int boardSizeX = 8, boardSizeY = 8;
 
 const std::string PAWN_WHITE = "pawn.png";
@@ -39,7 +37,11 @@ const Piece BISHOP{ "bishop", BISHOP_WHITE, BISHOP_BLACK, 'X' ,{} };
 const Piece QUEEN{ "queen", QUEEN_WHITE, QUEEN_BLACK, '*' ,{} };
 const Piece ROOK{ "rook", ROOK_WHITE, ROOK_WHITE, '+' ,{} };
 
-int chessboard[8][8] = {
+vector<array<int, 2>> possibleMoves;
+bool currentTurn = true;
+int selectedPiece;
+
+array<array<int, 8>, 8> chessboard{{
     {-1, -2, -3, -4, -5, -3, -2, -1},
     {-6, -6, -6, -6, -6, -6, -6, -6},
     { 0,  0,  0,  0,  0,  0,  0,  0},
@@ -47,9 +49,9 @@ int chessboard[8][8] = {
     { 0,  0,  0,  0,  0,  0,  0,  0},
     { 0,  0,  0,  0,  0,  0,  0,  0},
     { 6,  6,  6,  6,  6,  6,  6,  6},
-    { 1,  2,  3,  4,  5,  3,  2,  1}
+    { 1,  2,  3,  4,  5,  3,  2,  1}}
 };
-bool currentTurn = true;
+
 
 bool positionExist(int x2, int y2) {
     if (x2 > -1 and x2 < boardSizeX and y2 > -1 and y2 < boardSizeY)
@@ -80,43 +82,26 @@ Piece getPiece(int piece) {
     }
 }
 
-bool canMove(Vector2i from, Vector2i to) {
-    if (from == to)
-        return false;
-
-    int currPieceId = getPiece(from);
-    int targetPieceId = getPiece(to);
-
-
-    bool rightPiecesColors = currentTurn ? (currPieceId > 0 and targetPieceId <= 0) : (currPieceId < 0 and targetPieceId >= 0);
-
-
-    if (rightPiecesColors) {
-        //checking if piece can move to the square
-        Piece piece = getPiece(abs(currPieceId));
-        for (array<int, 2> pos : piece.localAttackSpots)
-        {
-            Vector2i globalAttackSpot = (currPieceId>0? Vector2i{ from.x - pos[0], from.y - pos[1]} : Vector2i{pos[0] + from.x, pos[1] + from.y});
-            if (globalAttackSpot == to) {
-                return true;
-            }
-            else
-                LOG("X: " << globalAttackSpot.x << " Y: " << globalAttackSpot.y << " X: " << to.x << " Y: " << to.y);
-        }
-        return false;
-    }
-    else
-        LOG((currentTurn ? "White turn" : "Black turn"));
-    return false;
+void selectPiece(Vector2i position) {
+    int pieceId = getPiece(position);
+    cout << "xd";
+    if (pieceId != 0) {
+        selectedPiece = pieceId;
+        possibleMoves = vector<array<int, 2>>{ getPiece(pieceId).getAttackedSquares(chessboard, array<int, 2>{ position.x, position.y }) };
+    } 
 }
 
+
+
+
 bool move(Vector2i from, Vector2i to) {
-    if (canMove(from, to)) {
-        int currPiece = getPiece(from);
-        chessboard[from.y][from.x] = 0;
-        chessboard[to.y][to.x] = currPiece;
-        currentTurn = !currentTurn;
-        return true;
+    for(array<int, 2> possibleMove : possibleMoves) {
+        if (possibleMove == array<int, 2>{ to.x, to.y }) {
+            chessboard[from.y][from.x] = 0;
+            chessboard[to.y][to.x] = selectedPiece;
+            currentTurn = !currentTurn;
+            return true;
+        }
     }
     return false;
 }
@@ -152,6 +137,7 @@ int main()
             if (event.type == sf::Event::MouseButtonReleased)
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     selectedPos = mousePos;
+                    selectPiece(selectedPos);
                     if (moveFrom.x != -1 and moveFrom.y != -1) {
                         move(moveFrom, selectedPos);
                         moveFrom = Vector2i(-1, -1);
@@ -174,9 +160,16 @@ int main()
                     rectangle.setFillColor(Color::Red);
                 }    
                 else if (mousePos.x == x and mousePos.y == y)
-                    rectangle.setFillColor(Color::Yellow);       
+                    rectangle.setFillColor(Color::Yellow);   
                 else 
-                    rectangle.setFillColor((x + y) % 2 == 0 ? cellColor1 : cellColor2);                  
+                    rectangle.setFillColor((x + y) % 2 == 0 ? cellColor1 : cellColor2);         
+
+                for (array<int, 2> pos : possibleMoves) {
+                    if (pos[0] == x and pos[1] == y){
+                        rectangle.setFillColor(Color::Green);
+                        break;
+                    }
+                }
                 
                 rectangle.setPosition(Vector2f(x * 100, y * 100));
                 window.draw(rectangle);
