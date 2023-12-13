@@ -194,7 +194,7 @@ bool checkForCheckMate() {
             int currSquare = chessboard[y][x];
             if (currentTurn ? currSquare > 0 : currSquare < 0) {
                 std::vector<possibleMove> pMoves = getSafeMoves(getPiece(abs(currSquare)).GetPossibleMoves(chessboard, movesNotation, { x, y }), sf::Vector2i(x, y));
-                if (possibleMoves.size() > 0)
+                if (pMoves.size() > 0)
                     return false;
             }
                 
@@ -290,11 +290,11 @@ int main()
 
                     drawBoard();
 
-                    sf::Vector2i kingPos = getKingPos(currentTurn);
+                    sf::Vector2i kingPos = getKingPos(currentTurn, chessboard);
                     std::array<std::array<int, 8>, 8> currAttackMap = getAttackMap(chessboard, currentTurn, movesNotation);
-                    if (checkForCheck(kingPos, currAttackMap)) {
+                    /*if (checkForCheck(kingPos, currAttackMap)) {
                         checkForCheckMate();
-                    }
+                    }*/
                     //std::array<std::array<int, 8>, 8> attackedSquaresMap = getAttackMap(chessboard, currentTurn, movesNotation);
                     //drawAttackMap(attackedSquaresMap);
 
