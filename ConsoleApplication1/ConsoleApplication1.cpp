@@ -1,7 +1,4 @@
-﻿// ConsoleApplication1.cpp : Ten plik zawiera funkcję „main”. W nim rozpoczyna się i kończy wykonywanie programu.
-//
-
-#define LOG(x) std::cout << x << std::endl;
+﻿#define LOG(x) std::cout << x << std::endl;
 
 #include <stdlib.h> 
 #include <vector>
@@ -10,38 +7,22 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Piece.h"
+#include "Pawn.h"
+#include "King.h"
+#include "ChessConstants.h"
 
 
-using namespace sf;
-
-int boardSizeX = 8, boardSizeY = 8;
-
-const std::string PAWN_WHITE = "pawn.png";
-const std::string KNIGHT_WHITE = "knight.png";
-const std::string BISHOP_WHITE = "bishop.png";
-const std::string ROOK_WHITE = "rock.png";
-const std::string QUEEN_WHITE = "queen.jpg";
-const std::string KING_WHITE = "king.png";
-
-const std::string PAWN_BLACK = "pawn.png";
-const std::string KNIGHT_BLACK = "knight_black.png";
-const std::string BISHOP_BLACK = "bishop_black.jpg";
-const std::string ROOK_BLACK = "rook_black.png";
-const std::string QUEEN_BLACK = "queen_black.jpg";
-const std::string KING_BLACK = "king_black.png";
-
-const Piece PAWN{ "pawn", PAWN_WHITE, PAWN_BLACK, ' ', { {0,1}, {0,2} } };
-const Piece KING{ "king", KING_WHITE, KING_BLACK, ' ', { {0,1}, {1,0}, {-1, 0}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1} } };
-const Piece KNIGHT{ "knight", KNIGHT_WHITE, KNIGHT_BLACK, ' ', { {2,-1}, {2, 1}, {1,2 }, {-1, 2}, {-2, 1}, {-2, -1}, {-1,-2}, {1, -2} } };
-const Piece BISHOP{ "bishop", BISHOP_WHITE, BISHOP_BLACK, 'X' ,{} };
-const Piece QUEEN{ "queen", QUEEN_WHITE, QUEEN_BLACK, '*' ,{} };
-const Piece ROOK{ "rook", ROOK_WHITE, ROOK_WHITE, '+' ,{} };
-
-vector<array<int, 2>> possibleMoves;
+std::vector<possibleMove> possibleMoves;
+std::string movesNotation;
 bool currentTurn = true;
 int selectedPiece;
 
-array<array<int, 8>, 8> chessboard{{
+sf::Color cellColor1(245, 222, 179);
+sf::Color cellColor2(139, 69, 19);
+
+sf::RenderWindow window(sf::VideoMode(800, 800), "Chess");
+
+std::array<std::array<int, 8>, 8> chessboard{{
     {-1, -2, -3, -4, -5, -3, -2, -1},
     {-6, -6, -6, -6, -6, -6, -6, -6},
     { 0,  0,  0,  0,  0,  0,  0,  0},
@@ -52,6 +33,13 @@ array<array<int, 8>, 8> chessboard{{
     { 1,  2,  3,  4,  5,  3,  2,  1}}
 };
 
+sf::Vector2i getKingPos(bool color, std::array<std::array<int, 8>, 8> board = chessboard) {
+    for(int y = 0; y < 8; y++)
+        for (int x = 0; x < 8; x++)
+            if (board[y][x] == (color? 5 : -5))
+                return sf::Vector2i(x, y);
+   return sf::Vector2i(-1, -1);
+}
 
 bool positionExist(int x2, int y2) {
     if (x2 > -1 and x2 < boardSizeX and y2 > -1 and y2 < boardSizeY)
@@ -59,139 +47,278 @@ bool positionExist(int x2, int y2) {
     return false;
 }
 
-int getPiece(Vector2i position) {
+bool checkForCheck(sf::Vector2i kingPos, std::array<std::array<int, 8>, 8> attackMap) {
+    if (kingPos.x != -1 and kingPos.y != -1) {
+        if (attackMap[kingPos.y][kingPos.x] > 0) {
+            std::cout << (currentTurn ? "White" : "Black") << " king is under attack\n";
+            return true;
+        }   
+    }
+    else {
+        std::cout << (currentTurn ? "White" : "Black") << " king died\n";
+        std::cout << (currentTurn ? "Black" : "White") << " team won\n";
+    }
+    return false;
+}
+
+int getPiece(sf::Vector2i position) {
     if (positionExist(position.y, position.x))
-       return chessboard[position.y][position.x];
+        return chessboard[position.y][position.x];
     return 0;
 }
 
-Piece getPiece(int piece) {
+Piece& getPiece(int piece) {
     switch (piece) {
-        case 1:
-            return ROOK;
-        case 2:
-            return KNIGHT;
-        case 3:
-            return BISHOP;
-        case 4:
-            return QUEEN;
-        case 5:
-            return KING;
-        case 6:
-            return PAWN;
+    case 1:
+        return ROOK;
+    case 2:
+        return KNIGHT;
+    case 3:
+        return BISHOP;
+    case 4:
+        return QUEEN;
+    case 5:
+        return KING;
+    case 6:
+        return PAWN;
     }
 }
 
-void selectPiece(Vector2i position) {
-    int pieceId = getPiece(position);
-    cout << "xd";
-    if (pieceId != 0) {
-        selectedPiece = pieceId;
-        possibleMoves = vector<array<int, 2>>{ getPiece(pieceId).getAttackedSquares(chessboard, array<int, 2>{ position.x, position.y }) };
-    } 
-}
+bool movePiece(sf::Vector2i from, sf::Vector2i to, std::array<std::array<int, 8>, 8>& board, std::vector<possibleMove> moves) {
+
+    for (possibleMove possibleMove : moves) {
+        if (possibleMove.x == to.x and possibleMove.y == to.y) {
+
+            board[from.y][from.x] = 0;
+            board[to.y][to.x] = selectedPiece;
+            std::string moveNote = std::string(1, abc[from.x]) + std::to_string(from.y + 1) + " " + std::string(1, abc[to.x]) + std::to_string(to.y + 1);
 
 
-
-
-bool move(Vector2i from, Vector2i to) {
-    for(array<int, 2> possibleMove : possibleMoves) {
-        if (possibleMove == array<int, 2>{ to.x, to.y }) {
-            chessboard[from.y][from.x] = 0;
-            chessboard[to.y][to.x] = selectedPiece;
-            currentTurn = !currentTurn;
+            //std::cout << possibleMove.moveType << "\n";
+            getPiece(abs(selectedPiece)).AfterMove(board, possibleMove);
+            if (&board == &chessboard) {
+                movesNotation += (" | " + moveNote);
+                currentTurn = !currentTurn;
+            }
+            possibleMoves = {};
             return true;
         }
     }
     return false;
 }
 
+std::array<std::array<int, 8>, 8> getAttackMap(std::array<std::array<int, 8>, 8> board, bool color, std::string moves) {
+
+    std::array<std::array<int, 8>, 8> attackMap = std::array<std::array<int, 8>, 8>();
+    for (int y = 0; y < 8; y++) {
+        for (int x = 0; x < 8; x++) {
+            int currSquare = board[y][x];
+            if (color ? currSquare < 0 : currSquare>0) {
+
+                std::vector<possibleMove> attackedSquares = getPiece(abs(currSquare)).GetPossibleMoves(board, moves, { {x,y} }, true);
+                for (possibleMove possibleMove : attackedSquares) {
+                    attackMap[possibleMove.y][possibleMove.x] += 1;
+                }
+            }
+        }
+    }
+    return attackMap;
+
+}
+
+void drawSquare(sf::Vector2i pos, sf::Color color = sf::Color::White) {
+    sf::RectangleShape square(sf::Vector2f(100, 100));
+    square.setPosition(sf::Vector2f(pos.x * 100, pos.y * 100));
+
+    if (color == sf::Color::White)
+        square.setFillColor((pos.x + pos.y % 2) ? cellColor1 : cellColor2);
+    else
+        square.setFillColor(color);
+
+    window.draw(square);
+}
+
+void drawAttackMap(std::array<std::array<int, 8>, 8> attackedSquaresMap) {
+
+    for (int y = 0; y < 8; y++)
+        for (int x = 0; x < 8; x++)
+        {
+            int attackLevel = attackedSquaresMap[y][x];
+            if (attackLevel > 0) {
+                drawSquare(sf::Vector2i(x, y), sf::Color(attackLevel * 50, attackLevel * 50, attackLevel * 50));
+            }
+        }
+}
+
+std::vector<possibleMove> getSafeMoves(std::vector<possibleMove> moves, sf::Vector2i from) {
+    std::vector<possibleMove> safeMoves;
+    std::cout << "--------\n";
+    for (possibleMove move : moves) {
+        std::array<std::array<int, 8>, 8> vrtBoard = chessboard;
+        if (movePiece(from, sf::Vector2i(move.x, move.y), vrtBoard, moves)) {
+            std::cout << "________\n";
+            for (const auto& e : vrtBoard) {
+                for (const auto& e1 : e)
+                    std::cout << e1;
+                std::cout << "\n";
+            }
+            std::array<std::array<int, 8>, 8> vrtAttackMap = getAttackMap(vrtBoard, currentTurn, movesNotation);
+
+
+
+            //drawAttackMap(vrtAttackMap);
+
+            if (!checkForCheck(getKingPos(currentTurn, vrtBoard), vrtAttackMap))
+                safeMoves.push_back(move);
+        }
+        
+    }
+    return safeMoves;
+}
+
+void selectPiece(sf::Vector2i position) {
+    int pieceId = getPiece(position);
+    if (pieceId != 0 and currentTurn ? pieceId > 0:pieceId < 0) {
+        selectedPiece = pieceId;
+        std::array<int, 2> pos = std::array<int, 2>{ position.x, position.y };
+        possibleMoves = getSafeMoves(getPiece(abs(pieceId)).GetPossibleMoves(chessboard, movesNotation, pos), position);
+
+    }
+    else
+        possibleMoves = {};
+}
+
+bool checkForCheckMate() {
+    for (int y = 0; y < 8; y++)
+        for (int x = 0; x < 8; x++){
+            int currSquare = chessboard[y][x];
+            if (currentTurn ? currSquare > 0 : currSquare < 0) {
+                std::vector<possibleMove> pMoves = getSafeMoves(getPiece(abs(currSquare)).GetPossibleMoves(chessboard, movesNotation, { x, y }), sf::Vector2i(x, y));
+                if (possibleMoves.size() > 0)
+                    return false;
+            }
+                
+        }
+    std::cout << "checkMate";
+    return true;
+}
+
+void drawBoard() {
+
+    for (int y = 0; y < 8; y++)
+        for (int x = 0; x < 8; x++) {
+            sf::RectangleShape square(sf::Vector2f(100, 100));
+            square.setPosition(sf::Vector2f(x * 100, y * 100));
+            square.setFillColor(((x + y) % 2) ? cellColor1 : cellColor2);
+            window.draw(square);
+        }
+}
+
+void drawPieces() {
+    for (int y = 0; y < 8; y++)
+        for (int x = 0; x < 8; x++)
+        {
+            int pieceId = getPiece(sf::Vector2i(x, y));
+            if (pieceId == 0)
+                continue;
+            const Piece& piece = getPiece(abs(pieceId));
+            std::string pieceImgName = pieceId > 0 ? piece.whiteSpriteName : piece.blackSpriteName;
+
+            if (pieceImgName != "") {
+                sf::Sprite pieceSprite;
+                sf::Texture pieceTexture;
+                pieceTexture.loadFromFile(pieceImgName);
+                pieceSprite.setTexture(pieceTexture);
+                pieceSprite.setScale(
+                   0.5,
+                    0.5);;
+                pieceSprite.setPosition(sf::Vector2f((x * 100)+ 50-pieceSprite.getLocalBounds().width/4, y * 100 + 50 - pieceSprite.getLocalBounds().height / 4));
+                window.draw(pieceSprite);
+            }
+        }
+
+}
 
 int main()
 {
-    Color cellColor1(245, 222, 179);
-    Color cellColor2(139, 69, 19);
+    sf::Vector2i selectedPos = sf::Vector2i(-1, -1);
+    sf::Vector2i moveFrom = sf::Vector2i(-1, -1);
 
-    RenderWindow window(VideoMode(800, 800), "Chess");
-
-    RectangleShape rectangle(Vector2f(100, 100));
-    Vector2i selectedPos = Vector2i(-1, -1);
-    Vector2i moveFrom = Vector2i(-1, -1);
-
-
-
-   // LOG(checkPiece(Pawn));
-
-    while (window.isOpen())
-    {
-        Vector2i pixelPos = Mouse::getPosition(window);
-        Vector2i mousePos;
-        mousePos = Vector2i(pixelPos.x / 100, pixelPos.y / 100);
-
-        Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == Event::Closed)
+    while (window.isOpen()){
+        sf::Event event;
+        while (window.waitEvent(event)){
+            if (event.type == sf::Event::Closed)
                 window.close();
-
-            if (event.type == sf::Event::MouseButtonReleased)
-                if (event.mouseButton.button == sf::Mouse::Left) {
+            else if (event.type == sf::Event::MouseButtonReleased and event.mouseButton.button == sf::Mouse::Left) {
+                sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+                sf::Vector2i mousePos;
+                mousePos = sf::Vector2i(pixelPos.x / 100, pixelPos.y / 100);
+                if (selectedPos != mousePos) {
                     selectedPos = mousePos;
-                    selectPiece(selectedPos);
+                    //std::cout << std::to_string(selectedPos.x) + "\n";
+                    //std::cout << std::to_string(selectedPos.y) + "\n";
+                        
+
                     if (moveFrom.x != -1 and moveFrom.y != -1) {
-                        move(moveFrom, selectedPos);
-                        moveFrom = Vector2i(-1, -1);
-                        selectedPos = Vector2i(-1, -1);
-                    }   
-                    else if (getPiece(selectedPos) != 0)
-                        moveFrom = selectedPos;
-                }
-                    
-                
-        }
-
-
-        window.clear();
-        for (int y = 0; y < 8; y++) 
-        {
-            for (int x = 0; x < 8; x++)
-            {
-                if (selectedPos.x == x and selectedPos.y == y) {
-                    rectangle.setFillColor(Color::Red);
-                }    
-                else if (mousePos.x == x and mousePos.y == y)
-                    rectangle.setFillColor(Color::Yellow);   
-                else 
-                    rectangle.setFillColor((x + y) % 2 == 0 ? cellColor1 : cellColor2);         
-
-                for (array<int, 2> pos : possibleMoves) {
-                    if (pos[0] == x and pos[1] == y){
-                        rectangle.setFillColor(Color::Green);
-                        break;
+                        if (movePiece(moveFrom, selectedPos, chessboard, possibleMoves)) {
+                            
+                            moveFrom = sf::Vector2i(-1, -1);
+                            selectedPos = sf::Vector2i(-1, -1);
+                        }
+                        else
+                        {
+                            possibleMoves = {};
+                            if (currentTurn ? (getPiece(selectedPos) > 0) : (getPiece(selectedPos) < 0))
+                            {
+                                selectPiece(selectedPos);
+                                moveFrom = selectedPos;
+                            }
+                            else {
+                                moveFrom = sf::Vector2i(-1, -1);
+                                selectedPos = sf::Vector2i(-1, -1);
+                            }
+                        }
                     }
+                    else if (getPiece(selectedPos) != 0) {
+                        selectPiece(selectedPos);
+                        moveFrom = selectedPos;
+                    }
+                    else
+                        selectedPos = sf::Vector2i(-1, -1);
+
+                    window.clear();
+
+                    drawBoard();
+
+                    sf::Vector2i kingPos = getKingPos(currentTurn);
+                    std::array<std::array<int, 8>, 8> currAttackMap = getAttackMap(chessboard, currentTurn, movesNotation);
+                    if (checkForCheck(kingPos, currAttackMap)) {
+                        checkForCheckMate();
+                    }
+                    //std::array<std::array<int, 8>, 8> attackedSquaresMap = getAttackMap(chessboard, currentTurn, movesNotation);
+                    //drawAttackMap(attackedSquaresMap);
+
+                    //std::array<std::array<int, 8>, 8> currAttackMap = drawAttackMap(attackedSquaresMap);
+                    //sf::Vector2i kingPos = getKingPos(currentTurn);
+                    //checkForCheck(kingPos, currAttackMap);
+                    
+
+                    if (selectedPos != sf::Vector2i(-1, -1))
+                        drawSquare(selectedPos, sf::Color::Red);
+
+                    for (possibleMove possibleMove : possibleMoves)
+                        drawSquare(sf::Vector2i(possibleMove.x, possibleMove.y), sf::Color::Green);
+                    
+                    drawPieces();
+
+                    window.display();
                 }
-                
-                rectangle.setPosition(Vector2f(x * 100, y * 100));
-                window.draw(rectangle);
-
-                //getting piece image
-                int pieceId = getPiece(Vector2i(x, y));
-                Piece piece = getPiece(abs(pieceId));
-                string pieceImgName = pieceId>0? piece.whiteSpriteName : piece.blackSpriteName;
-
-                if (pieceImgName != "") {
-                    Sprite pieceSprite;
-                    Texture pieceTexture;
-                    pieceTexture.loadFromFile(pieceImgName);
-                    pieceSprite.setTexture(pieceTexture);
-                    pieceSprite.setPosition(Vector2f(x * 100, y * 100));
-                    window.draw(pieceSprite);
-                } 
             }
         }
-        window.display();
+
     }
 
     return 0;
 }
+
 

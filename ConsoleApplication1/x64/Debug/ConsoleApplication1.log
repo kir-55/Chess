@@ -1,2 +1,23 @@
-﻿  Piece.cpp
+﻿  ConsoleApplication1.cpp
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(131,56): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(131,56): warning C4244:         with
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(131,56): warning C4244:         [
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(131,56): warning C4244:             T=float
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(131,56): warning C4244:         ]
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(131,43): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(131,43): warning C4244:         with
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(131,43): warning C4244:         [
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(131,43): warning C4244:             T=float
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(131,43): warning C4244:         ]
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(211,56): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(211,56): warning C4244:         with
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(211,56): warning C4244:         [
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(211,56): warning C4244:             T=float
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(211,56): warning C4244:         ]
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(211,47): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(211,47): warning C4244:         with
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(211,47): warning C4244:         [
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(211,47): warning C4244:             T=float
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(211,47): warning C4244:         ]
+C:\Users\kudze\source\repos\Chess\Chess\ConsoleApplication1\ConsoleApplication1.cpp(85,1): warning C4715: 'getPiece': not all control paths return a value
   ConsoleApplication1.vcxproj -> C:\Users\kudze\source\repos\Chess\Chess\x64\Debug\ConsoleApplication1.exe
