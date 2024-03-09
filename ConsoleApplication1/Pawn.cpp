@@ -2,10 +2,7 @@
 
 
 
-Pawn::Pawn(std::string name, std::string whiteSpriteName, std::string blackSpriteName) : Piece(name, whiteSpriteName, blackSpriteName)
-{
-
-}
+Pawn::Pawn(std::string name, std::string whiteSpriteName, std::string blackSpriteName) : Piece(name, whiteSpriteName, blackSpriteName){}
 
 std::vector<possibleMove> Pawn::GetPossibleMoves(std::array<std::array<int, 8>, 8> board, std::string moves, std::array<int, 2> position, bool onlyAttack)
 {    
@@ -22,6 +19,35 @@ std::vector<possibleMove> Pawn::GetPossibleMoves(std::array<std::array<int, 8>, 
     //if have free space in front
     if(color ? (y - 1 > -1) : (y + 1 < 8) )
     {
+        
+            
+        //right attack move
+        if (x + 1 < 8) {
+            int attackRightSquare = board[y + (color ? -1 : 1)][x + 1];
+            if (attackRightSquare and color ? attackRightSquare < 0 : attackRightSquare > 0 or onlyAttack) {
+                if (y + (color ? -1 : 1) == (color ? 0 : 7)) {
+                    squareUnderAttack.push_back({ x + 1, y + (color ? -1 : 1), PROMOTION });
+                }
+                else {
+                    squareUnderAttack.push_back({ x + 1, y + (color ? -1 : 1), CAPTURE });
+                }
+            }
+                
+        }
+        //left attack move
+        if (x - 1 > -1) {
+            int attackLeftSquare = board[y + (color ? -1 : 1)][x - 1];
+            if (attackLeftSquare and color ? attackLeftSquare < 0 : attackLeftSquare > 0 or onlyAttack) {
+                if (y + (color ? -1 : 1) == (color ? 0 : 7)) {
+                    squareUnderAttack.push_back({ x - 1, y + (color ? -1 : 1), PROMOTION });
+                }
+                else {
+                    squareUnderAttack.push_back({ x - 1, y + (color ? -1 : 1), CAPTURE });
+                }
+            }
+             
+        }
+
         //single move
         int moveSquare = board[y + (color ? -1 : 1)][x];
         if (!moveSquare and !onlyAttack) {
@@ -35,19 +61,6 @@ std::vector<possibleMove> Pawn::GetPossibleMoves(std::array<std::array<int, 8>, 
                 if ((color ? y == 6 : y == 1) and !doubleMoveSquare)
                     squareUnderAttack.push_back({ x, y + (color ? -2 : 2), MOVE });
             }
-        }
-            
-        //right attack move
-        if (x + 1 < 8) {
-            int attackRightSquare = board[y + (color ? -1 : 1)][x + 1];
-            if (attackRightSquare and color ? attackRightSquare < 0 : attackRightSquare > 0 or onlyAttack)
-                squareUnderAttack.push_back({ x + 1, y + (color ? -1 : 1), CAPTURE });
-        }
-        //left attack move
-        if (x - 1 > -1) {
-            int attackLeftSquare = board[y + (color ? -1 : 1)][x - 1];
-            if (attackLeftSquare and color ? attackLeftSquare < 0 : attackLeftSquare > 0 or onlyAttack)
-                squareUnderAttack.push_back({ x - 1, y + (color ? -1 : 1), CAPTURE });
         }
         
         if(onlyAttack)

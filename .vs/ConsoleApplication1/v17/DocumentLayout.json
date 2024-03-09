@@ -1,0 +1,152 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Chess.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\Chess.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\King.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\King.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\King.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\King.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Pawn.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\Pawn.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\ChessConstants.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\ChessConstants.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Piece.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\Piece.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Pawn.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\Pawn.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Piece.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A892195D-245E-4B85-8AC5-BB0AD5DD8CA1}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\Piece.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 7,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Piece.cpp",
+              "DocumentMoniker": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Piece.cpp",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\Piece.cpp",
+              "ToolTip": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Piece.cpp",
+              "RelativeToolTip": "ConsoleApplication1\\Piece.cpp",
+              "ViewState": "AQIAACQAAAAAAAAAAAAAADMAAAADAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2023-12-03T15:09:05.28Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Piece.h",
+              "DocumentMoniker": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Piece.h",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\Piece.h",
+              "ToolTip": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Piece.h",
+              "RelativeToolTip": "ConsoleApplication1\\Piece.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2023-12-02T09:55:14.969Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Pawn.h",
+              "DocumentMoniker": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Pawn.h",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\Pawn.h",
+              "ToolTip": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Pawn.h",
+              "RelativeToolTip": "ConsoleApplication1\\Pawn.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2023-12-09T10:26:24.341Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ChessConstants.h",
+              "DocumentMoniker": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\ChessConstants.h",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\ChessConstants.h",
+              "ToolTip": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\ChessConstants.h",
+              "RelativeToolTip": "ConsoleApplication1\\ChessConstants.h",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2023-12-13T18:14:22.663Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "King.cpp",
+              "DocumentMoniker": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\King.cpp",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\King.cpp",
+              "ToolTip": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\King.cpp",
+              "RelativeToolTip": "ConsoleApplication1\\King.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAFoAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2023-12-13T16:48:20.186Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "King.h",
+              "DocumentMoniker": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\King.h",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\King.h",
+              "ToolTip": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\King.h",
+              "RelativeToolTip": "ConsoleApplication1\\King.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2023-12-13T16:44:55.359Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Pawn.cpp",
+              "DocumentMoniker": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Pawn.cpp",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\Pawn.cpp",
+              "ToolTip": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Pawn.cpp",
+              "RelativeToolTip": "ConsoleApplication1\\Pawn.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2023-12-09T10:21:20.549Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Chess.cpp",
+              "DocumentMoniker": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Chess.cpp",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\Chess.cpp",
+              "ToolTip": "C:\\Users\\kudze\\source\\repos\\Chess\\Chess\\ConsoleApplication1\\Chess.cpp",
+              "RelativeToolTip": "ConsoleApplication1\\Chess.cpp",
+              "ViewState": "AQIAAA4BAAAAAAAAAAAiwB4BAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2023-11-25T16:08:17.946Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
