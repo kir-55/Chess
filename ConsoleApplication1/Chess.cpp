@@ -16,6 +16,7 @@ std::vector<possibleMove> possibleMoves;
 std::string movesNotation;
 bool currentTurn = true;
 bool gameOn = true;
+bool check = false;
 int selectedPiece;
 
 sf::Color cellColor1(245, 222, 179);
@@ -147,6 +148,21 @@ void drawSquare(sf::Vector2i pos, sf::Color color = sf::Color::White) {
     window.draw(square);
 }
 
+void drawCircle(sf::Vector2i pos, sf::Color color = sf::Color::White) {
+    sf::CircleShape circle;
+    circle.setRadius(25);
+    circle.setFillColor(sf::Color(255, 255, 255, 0));
+    circle.setOutlineThickness(20);
+    circle.setOutlineColor(color);
+    
+    circle.setPosition(sf::Vector2f(pos.x * 100 + 25, pos.y * 100 + 25));
+
+    if (color == sf::Color::White)
+        circle.setFillColor((pos.x + pos.y % 2) ? cellColor1 : cellColor2);
+
+    window.draw(circle);
+}
+
 void drawAttackMap(std::array<std::array<int, 8>, 8> attackedSquaresMap) {
 
     for (int y = 0; y < 8; y++)
@@ -251,9 +267,7 @@ void drawPieces() {
                 sf::Texture pieceTexture;
                 pieceTexture.loadFromFile(pieceImgName);
                 pieceSprite.setTexture(pieceTexture);
-                pieceSprite.setScale(
-                   0.5,
-                    0.5);;
+                pieceSprite.setScale(0.5,0.5);;
                 pieceSprite.setPosition(sf::Vector2f((x * 100)+ 50-pieceSprite.getLocalBounds().width/4, y * 100 + 50 - pieceSprite.getLocalBounds().height / 4));
                 window.draw(pieceSprite);
             }
@@ -292,10 +306,19 @@ int main()
                                 //check for the checkmate
                                 std::cout << "after move \n";
                                 std::cout << currentTurn << std::endl;
+
+                                std::array<std::array<int, 8>, 8> currAttackMap = getAttackMap(chessboard, currentTurn, movesNotation);
+                                sf::Vector2i kingPos = getKingPos(currentTurn, chessboard);
+
+                                if (checkForCheck(kingPos, currAttackMap)) {
+                                    check = true;
+                                }
+                                else {
+                                    check = false;
+                                }
+
                                 if (!checkIfCanMove()) {
-                                    sf::Vector2i kingPos = getKingPos(currentTurn, chessboard);
-                                    std::array<std::array<int, 8>, 8> currAttackMap = getAttackMap(chessboard, currentTurn, movesNotation);
-                                    if (checkForCheck(kingPos, currAttackMap)) {
+                                    if (check) {
                                         std::cout << "Checkmate!\n" << (currentTurn ? "Black" : "White") << " won.\n";
                                         gameOn = false;
                                     }
@@ -333,7 +356,10 @@ int main()
                         drawBoard();
 
                         sf::Vector2i kingPos = getKingPos(currentTurn, chessboard);
-                        std::array<std::array<int, 8>, 8> currAttackMap = getAttackMap(chessboard, currentTurn, movesNotation);
+                        if (check) {
+                            drawSquare(kingPos, sf::Color(191, 114, 114, 150));
+                        }
+                        //std::array<std::array<int, 8>, 8> currAttackMap = getAttackMap(chessboard, currentTurn, movesNotation);
                         /*if (checkForCheck(kingPos, currAttackMap)) {
                             checkForCheckMate();
                         }*/
@@ -346,10 +372,11 @@ int main()
 
 
                         if (selectedPos != sf::Vector2i(-1, -1))
-                            drawSquare(selectedPos, sf::Color::Red);
+                            drawSquare(selectedPos, sf::Color(114, 191, 137, 100));
 
                         for (possibleMove possibleMove : possibleMoves)
-                            drawSquare(sf::Vector2i(possibleMove.x, possibleMove.y), sf::Color::Green);
+                            drawCircle(sf::Vector2i(possibleMove.x, possibleMove.y), sf::Color(133, 133, 133, 100));
+                            //drawSquare(sf::Vector2i(possibleMove.x, possibleMove.y), sf::Color::Green);
 
                         drawPieces();
 
