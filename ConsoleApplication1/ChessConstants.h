@@ -3,21 +3,21 @@
 
 int boardSizeX = 8, boardSizeY = 8;
 
-const std::string SPRITES_PATH = "Sprites/";
+const std::string CONTENT_PATH = "Content/";
 
-const std::string PAWN_WHITE = SPRITES_PATH + "white-pawn.png";
-const std::string KNIGHT_WHITE = SPRITES_PATH + "white-knight.png";
-const std::string BISHOP_WHITE = SPRITES_PATH + "white-bishop.png";
-const std::string ROOK_WHITE = SPRITES_PATH + "white-rook.png";
-const std::string QUEEN_WHITE = SPRITES_PATH + "white-queen.png";
-const std::string KING_WHITE = SPRITES_PATH + "white-king.png";
+const std::string PAWN_WHITE = CONTENT_PATH + "white-pawn.png";
+const std::string KNIGHT_WHITE = CONTENT_PATH + "white-knight.png";
+const std::string BISHOP_WHITE = CONTENT_PATH + "white-bishop.png";
+const std::string ROOK_WHITE = CONTENT_PATH + "white-rook.png";
+const std::string QUEEN_WHITE = CONTENT_PATH + "white-queen.png";
+const std::string KING_WHITE = CONTENT_PATH + "white-king.png";
 
-const std::string PAWN_BLACK = SPRITES_PATH + "black-pawn.png";
-const std::string KNIGHT_BLACK = SPRITES_PATH + "black-knight.png";
-const std::string BISHOP_BLACK = SPRITES_PATH + "black-bishop.png";
-const std::string ROOK_BLACK = SPRITES_PATH + "black-rook.png";
-const std::string QUEEN_BLACK = SPRITES_PATH + "black-queen.png";
-const std::string KING_BLACK = SPRITES_PATH + "black-king.png";
+const std::string PAWN_BLACK = CONTENT_PATH + "black-pawn.png";
+const std::string KNIGHT_BLACK = CONTENT_PATH + "black-knight.png";
+const std::string BISHOP_BLACK = CONTENT_PATH + "black-bishop.png";
+const std::string ROOK_BLACK = CONTENT_PATH + "black-rook.png";
+const std::string QUEEN_BLACK = CONTENT_PATH + "black-queen.png";
+const std::string KING_BLACK = CONTENT_PATH + "black-king.png";
 
 Pawn PAWN{ "pawn", PAWN_WHITE, PAWN_BLACK };
 King KING{ "king", KING_WHITE, KING_BLACK};

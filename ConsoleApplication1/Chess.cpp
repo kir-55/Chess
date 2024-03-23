@@ -27,8 +27,12 @@ bool check = false;
 int selectedPiece;
 int squareSize = 100;
 
+tgui::Theme GUITheme{ CONTENT_PATH + "Theme.txt" };
+
 sf::Color cellColor1(245, 222, 179);
 sf::Color cellColor2(139, 69, 19);
+sf::Color backgroundColor(67, 122, 55);
+sf::Color GUIColor(86, 191, 82);
 
 sf::RenderWindow window(sf::VideoMode(800, 800), "Chess");
 tgui::Gui gui{ window };
@@ -319,22 +323,35 @@ void updateTextSize(tgui::BackendGui& gui)
     gui.setTextSize(static_cast<unsigned int>(0.07f * windowHeight)); // 7% of height
 }
 
-void loadWidgets(tgui::BackendGui& gui)
+
+void loadMenu(tgui::BackendGui& gui, std::string message = "")
 {
     updateTextSize(gui);
 
     // We want the text size to be updated when the window is resized
     gui.onViewChange([&gui] { updateTextSize(gui); });
+    if (message != "") {
+        auto label = tgui::Label::create();
+        label->setText(message);
+        label->setPosition({ "28%", "10%" });
+        label->setTextSize(24);
+        label->setRenderer(GUITheme.getRenderer("Label"));
+        gui.add(label);
+    }
+    
 
     auto editBoxUsername = tgui::EditBox::create();
     editBoxUsername->setSize({ "66.67%", "12.5%" });
-    editBoxUsername->setPosition({ "16.67%", "16.67%" });
-    editBoxUsername->setDefaultText("Username");
+    editBoxUsername->setPosition({ "16.67%", "30%" });
+    editBoxUsername->setDefaultText("Nickname");
+    editBoxUsername->setMaximumCharacters(80);
+    editBoxUsername->setRenderer(GUITheme.getRenderer("EditBox"));
     gui.add(editBoxUsername);
 
-    auto button = tgui::Button::create("Login");
+    auto button = tgui::Button::create("PlAY");
     button->setSize({ "50%", "16.67%" });
-    button->setPosition({ "25%", "70%" });
+    button->setPosition({ "25%", "50%" });
+    button->setRenderer(GUITheme.getRenderer("Button"));
     gui.add(button);
 
     // Call the login function when the button is pressed and pass the edit boxes that we created as parameters
@@ -360,7 +377,8 @@ int main()
                 window.display();
             }
             else {
-                loadWidgets(gui);
+                loadMenu(gui);
+                window.clear(backgroundColor);
                 gui.draw();
                 window.display();
             }
@@ -392,7 +410,7 @@ int main()
 
 
 
-                loadWidgets(gui);
+                //loadWidgets(gui);
 
                 selectedPos = sf::Vector2i(-1, -1);
                 moveFrom = sf::Vector2i(-1, -1);
@@ -405,14 +423,18 @@ int main()
                     drawPieces();
                 }
                 else {
+                    window.clear(backgroundColor);
                     gui.draw();
                 }
 
                 window.display();
             }
             else if (event.type == sf::Event::TextEntered) {
-                if (!gameOn)
+                if (!gameOn) {
+                    window.clear(backgroundColor);
                     gui.draw();
+                }
+                    
                 window.display();
             }
             else if (event.type == sf::Event::MouseButtonReleased and event.mouseButton.button == sf::Mouse::Left) {
@@ -450,10 +472,13 @@ int main()
                                     if (check) {
                                         std::cout << "Checkmate!\n" << (currentTurn ? "Black" : "White") << " won.\n";
                                         gameOn = false;
+                                        std::string Winner = currentTurn ? "Black" : "White";
+                                        loadMenu(gui,"Checkmate!\n" + Winner + " won.");
                                     }
                                     else {
                                         std::cout << "Stalemate!\n Its draw.";
                                         gameOn = false;
+                                        loadMenu(gui, "Stalemate!\n Its draw.");
                                     }
                                 }
                             }
@@ -501,8 +526,12 @@ int main()
                     }
                 }
 
-                if(!gameOn)
+                if (!gameOn) {
+                    window.clear(backgroundColor);
                     gui.draw();
+                }
+
+                    
 
                 window.display();
 
