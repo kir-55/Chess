@@ -1,4 +1,6 @@
-#pragma once
+#ifndef KING_H
+#define KING_H
+
 #include "Piece.h"
 #include <string>
 class King : public Piece
@@ -9,3 +11,4 @@ public:
 	void AfterMove(std::array<std::array<int, 8>, 8>& board, possibleMove move) override;
 };
 
+#endif

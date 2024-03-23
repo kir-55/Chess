@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PIECE_H
+#define PIECE_H
+
 #include <vector>
 #include <array>
 #include <string>
@@ -31,3 +33,4 @@ public:
 	std::string blackSpriteName, whiteSpriteName; // like "pawn.png"
 };
 
+#endif

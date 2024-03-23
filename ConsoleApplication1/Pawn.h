@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PAWN_H
+#define PAWN_H
+
 #include "Piece.h"
 #include <iostream>
 
@@ -11,3 +13,4 @@ public:
     void AfterMove(std::array<std::array<int, 8>, 8>& board, possibleMove move) override;
 };
 
+#endif

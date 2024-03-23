@@ -20,12 +20,20 @@ std::vector<possibleMove> possibleMoves;
 std::array<std::array<int, 8>, 8> attackMap;
 std::string movesNotation;
 
+bool canMove = true;
 bool currentTurn = true;
-bool gameOn = false;
 bool firstDraw = true;
 bool check = false;
 int selectedPiece;
 int squareSize = 100;
+
+int gameMode = 0;
+/* Game modes:
+0 - menu
+1 - local mode (1v1 on the same pc)
+2 - PvP by network
+*/ 
+
 
 tgui::Theme GUITheme{ CONTENT_PATH + "Theme.txt" };
 
@@ -267,7 +275,7 @@ void drawBoard() {
         for (int x = 0; x < 8; x++) {
             sf::RectangleShape square(sf::Vector2f(squareSize, squareSize));
             square.setPosition(sf::Vector2f(x * squareSize, y * squareSize));
-            square.setFillColor(((x + y) % 2) ? cellColor1 : cellColor2);
+            square.setFillColor(((x + y+currentTurn) % 2) ? cellColor1 : cellColor2);
             window.draw(square);
         }
 }
@@ -292,8 +300,8 @@ void drawPieces() {
                 pieceSprite.setTexture(pieceTexture);
                 pieceSprite.setScale(scale, scale);
 
-                int posX = x * squareSize + (squareSize - pieceSprite.getLocalBounds().width * scale) / 2;
-                int posY = y * squareSize + (squareSize - pieceSprite.getLocalBounds().height * scale) / 2;
+                int posX = (currentTurn? x : 7-x) * squareSize + (squareSize - pieceSprite.getLocalBounds().width * scale) / 2;
+                int posY = (currentTurn ? y : 7 - y) * squareSize + (squareSize - pieceSprite.getLocalBounds().height * scale) / 2;
                 pieceSprite.setPosition(sf::Vector2f(posX, posY));
 
                 window.draw(pieceSprite);
@@ -303,17 +311,23 @@ void drawPieces() {
 }
 
 
+void initializeOnline() {
+    bool color = rand() % 2 == 1; // to be replaced
+    currentTurn = color;
+
+}
+    
 
 
-void login(tgui::EditBox::Ptr username)
+void play(tgui::EditBox::Ptr username, int mode)
 {
-
     tgui::String u_name = username->getText();
     if (u_name != "") {
         std::cout << "logged as: " << u_name;
-        gameOn = true;
+        gameMode = mode;
+        if (gameMode == 2)
+            initializeOnline();
     }
-    
 }
 
 void updateTextSize(tgui::BackendGui& gui)
@@ -348,21 +362,30 @@ void loadMenu(tgui::BackendGui& gui, std::string message = "")
     editBoxUsername->setRenderer(GUITheme.getRenderer("EditBox"));
     gui.add(editBoxUsername);
 
-    auto button = tgui::Button::create("PlAY");
-    button->setSize({ "50%", "16.67%" });
-    button->setPosition({ "25%", "50%" });
-    button->setRenderer(GUITheme.getRenderer("Button"));
-    gui.add(button);
+    auto playOffline = tgui::Button::create("Play offline");
+    playOffline->setSize({ "50%", "16.67%" });
+    playOffline->setPosition({ "25%", "50%" });
+    playOffline->setRenderer(GUITheme.getRenderer("Button"));
+    gui.add(playOffline);
+
+    auto playOnline = tgui::Button::create("Play online");
+    playOnline->setSize({ "50%", "16.67%" });
+    playOnline->setPosition({ "25%", "70%" });
+    playOnline->setRenderer(GUITheme.getRenderer("Button"));
+    gui.add(playOnline);
 
     // Call the login function when the button is pressed and pass the edit boxes that we created as parameters
     // The "&" in front of "login" can be removed on newer compilers, but is kept here for compatibility with GCC < 8.
-    button->onPress(&login, editBoxUsername);
+    playOffline->onPress(&play, editBoxUsername, 1);
+    playOnline->onPress(&play, editBoxUsername, 1);
 }
 
 
 
 int main()
 {
+    srand(time(0)); // to be replaced
+
     sf::Vector2i selectedPos = sf::Vector2i(-1, -1);
     sf::Vector2i moveFrom = sf::Vector2i(-1, -1);
 
@@ -370,7 +393,7 @@ int main()
     {
 
         if (firstDraw) {
-            if (gameOn) {
+            if (gameMode != 0) {
                 drawBoard();
                 drawPieces();
                 gui.draw();
@@ -418,7 +441,7 @@ int main()
 
                 
                 
-                if (gameOn) {
+                if (gameMode != 0) {
                     drawBoard();
                     drawPieces();
                 }
@@ -430,7 +453,7 @@ int main()
                 window.display();
             }
             else if (event.type == sf::Event::TextEntered) {
-                if (!gameOn) {
+                if (gameMode == 0) {
                     window.clear(backgroundColor);
                     gui.draw();
                 }
@@ -438,12 +461,15 @@ int main()
                 window.display();
             }
             else if (event.type == sf::Event::MouseButtonReleased and event.mouseButton.button == sf::Mouse::Left) {
-                if (gameOn) {
+                if (gameMode != 0) {
                     sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
                     sf::Vector2i mousePos;
 
-                    
-                    mousePos = sf::Vector2i(pixelPos.x / squareSize, pixelPos.y / squareSize);
+                    if(currentTurn)
+                        mousePos = sf::Vector2i(pixelPos.x / squareSize, pixelPos.y / squareSize);
+                    else
+                        mousePos = sf::Vector2i(7-pixelPos.x / squareSize, 7-pixelPos.y / squareSize);
+
                     if (selectedPos != mousePos) {
                         selectedPos = mousePos;
 
@@ -471,13 +497,13 @@ int main()
                                 if (!checkIfCanMove()) {
                                     if (check) {
                                         std::cout << "Checkmate!\n" << (currentTurn ? "Black" : "White") << " won.\n";
-                                        gameOn = false;
+                                        gameMode = 0;
                                         std::string Winner = currentTurn ? "Black" : "White";
                                         loadMenu(gui,"Checkmate!\n" + Winner + " won.");
                                     }
                                     else {
                                         std::cout << "Stalemate!\n Its draw.";
-                                        gameOn = false;
+                                        gameMode = 0;
                                         loadMenu(gui, "Stalemate!\n Its draw.");
                                     }
                                 }
@@ -516,17 +542,23 @@ int main()
                             drawSquare(kingPos, sf::Color(191, 114, 114, 150));
                         }
 
-                        if (selectedPos != sf::Vector2i(-1, -1))
-                            drawSquare(selectedPos, sf::Color(114, 191, 137, 100));
+                        if (selectedPos != sf::Vector2i(-1, -1)) {
+                            sf::Vector2i position = currentTurn ? selectedPos : sf::Vector2i(7 - selectedPos.x, 7 - selectedPos.y);
+                            drawSquare(position, sf::Color(114, 191, 137, 100));
+                        }
+                            
 
-                        for (possibleMove possibleMove : possibleMoves)
-                            drawCircle(sf::Vector2i(possibleMove.x, possibleMove.y), sf::Color(133, 133, 133, 100));
+                        for (possibleMove possibleMove : possibleMoves){
+                            sf::Vector2i position = currentTurn ? sf::Vector2i(possibleMove.x, possibleMove.y)
+                                                                : sf::Vector2i(7 - possibleMove.x, 7 - possibleMove.y);
+                            drawCircle(position, sf::Color(133, 133, 133, 100));
+                        }
 
                         drawPieces();
                     }
                 }
 
-                if (!gameOn) {
+                if (gameMode == 0) {
                     window.clear(backgroundColor);
                     gui.draw();
                 }

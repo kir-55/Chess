@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
 
 
 int boardSizeX = 8, boardSizeY = 8;
@@ -28,3 +29,5 @@ Piece ROOK{ "rook", ROOK_WHITE, ROOK_BLACK, '+' ,{} };
 
 std::string moveSeparator = "|";
 const std::array<char, 8> abc = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+
+#endif
