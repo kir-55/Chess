@@ -4,7 +4,7 @@
 
 Pawn::Pawn(std::string name, std::string whiteSpriteName, std::string blackSpriteName) : Piece(name, whiteSpriteName, blackSpriteName){}
 
-std::vector<possibleMove> Pawn::GetPossibleMoves(std::array<std::array<int, 8>, 8> board, std::string moves, std::array<int, 2> position, bool onlyAttack)
+std::vector<possibleMove> Pawn::GetPossibleMoves(std::array<std::array<int, 8>, 8> board, std::array<std::array<int, 8>, 8> attackMap, std::string moves, std::array<int, 2> position, bool onlyAttack)
 {    
 
     int x = position[0];

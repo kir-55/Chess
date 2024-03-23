@@ -6,23 +6,32 @@
 #include <string>
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <TGUI/TGUI.hpp>
+#include <TGUI/Backend/SFML-Graphics.hpp>
+#include <enet/enet.h>
 #include "Piece.h"
 #include "Pawn.h"
 #include "King.h"
 #include "ChessConstants.h"
 
 
+
 std::vector<possibleMove> possibleMoves;
+std::array<std::array<int, 8>, 8> attackMap;
 std::string movesNotation;
+
 bool currentTurn = true;
-bool gameOn = true;
+bool gameOn = false;
+bool firstDraw = true;
 bool check = false;
 int selectedPiece;
+int squareSize = 100;
 
 sf::Color cellColor1(245, 222, 179);
 sf::Color cellColor2(139, 69, 19);
 
 sf::RenderWindow window(sf::VideoMode(800, 800), "Chess");
+tgui::Gui gui{ window };
 
 std::array<std::array<int, 8>, 8> chessboard{{
     {-1, -2, -3, -4, -5, -3, -2, -1},
@@ -97,13 +106,13 @@ bool movePiece(sf::Vector2i from, sf::Vector2i to, std::array<std::array<int, 8>
             board[to.y][to.x] = sp;
             std::string moveNote = std::string(1, abc[from.x]) + std::to_string(from.y + 1) + " " + std::string(1, abc[to.x]) + std::to_string(to.y + 1);
 
-            std::cout << "\nto x: " << to.x << " to y: " << to.y << "\n";
+            /*std::cout << "\nto x: " << to.x << " to y: " << to.y << "\n";
             std::cout << "________\n";
             for (const auto& e : board) {
                 for (const auto& e1 : e)
                     std::cout << e1 << "|";
                 std::cout << "\n";
-            }
+            }*/
             //std::cout << possibleMove.moveType << "\n";
             getPiece(abs(sp)).AfterMove(board, possibleMove);
             if (&board == &chessboard) {
@@ -125,7 +134,7 @@ std::array<std::array<int, 8>, 8> getAttackMap(std::array<std::array<int, 8>, 8>
             int currSquare = board[y][x];
             if (color ? currSquare < 0 : currSquare>0) {
 
-                std::vector<possibleMove> attackedSquares = getPiece(abs(currSquare)).GetPossibleMoves(board, moves, { {x,y} }, true);
+                std::vector<possibleMove> attackedSquares = getPiece(abs(currSquare)).GetPossibleMoves(board, attackMap, moves, { {x,y} }, true);
                 for (possibleMove possibleMove : attackedSquares) {
                     attackMap[possibleMove.y][possibleMove.x] += 1;
                 }
@@ -137,8 +146,8 @@ std::array<std::array<int, 8>, 8> getAttackMap(std::array<std::array<int, 8>, 8>
 }
 
 void drawSquare(sf::Vector2i pos, sf::Color color = sf::Color::White) {
-    sf::RectangleShape square(sf::Vector2f(100, 100));
-    square.setPosition(sf::Vector2f(pos.x * 100, pos.y * 100));
+    sf::RectangleShape square(sf::Vector2f(squareSize, squareSize));
+    square.setPosition(sf::Vector2f(pos.x * squareSize, pos.y * squareSize));
 
     if (color == sf::Color::White)
         square.setFillColor((pos.x + pos.y % 2) ? cellColor1 : cellColor2);
@@ -150,12 +159,12 @@ void drawSquare(sf::Vector2i pos, sf::Color color = sf::Color::White) {
 
 void drawCircle(sf::Vector2i pos, sf::Color color = sf::Color::White) {
     sf::CircleShape circle;
-    circle.setRadius(25);
+    circle.setRadius(squareSize/4);
     circle.setFillColor(sf::Color(255, 255, 255, 0));
-    circle.setOutlineThickness(20);
+    circle.setOutlineThickness(squareSize / 5);
     circle.setOutlineColor(color);
     
-    circle.setPosition(sf::Vector2f(pos.x * 100 + 25, pos.y * 100 + 25));
+    circle.setPosition(sf::Vector2f(pos.x * squareSize + squareSize/4, pos.y * squareSize + squareSize/4));
 
     if (color == sf::Color::White)
         circle.setFillColor((pos.x + pos.y % 2) ? cellColor1 : cellColor2);
@@ -206,7 +215,7 @@ void selectPiece(sf::Vector2i position) {
     if (pieceId != 0 and currentTurn ? pieceId > 0:pieceId < 0) {
         selectedPiece = pieceId;
         std::array<int, 2> pos = std::array<int, 2>{ position.x, position.y };
-        possibleMoves = getSafeMoves(getPiece(abs(pieceId)).GetPossibleMoves(chessboard, movesNotation, pos), position);
+        possibleMoves = getSafeMoves(getPiece(abs(pieceId)).GetPossibleMoves(chessboard, attackMap, movesNotation, pos), position);
 
     }
     else
@@ -218,8 +227,8 @@ bool checkIfCanMove() {
         for (int x = 0; x < 8; x++){
             int currSquare = chessboard[y][x];
             if (currentTurn ? currSquare > 0 : currSquare < 0) {
-                    std::vector<possibleMove> pMoves = getSafeMoves(getPiece(abs(currSquare)).GetPossibleMoves(chessboard, movesNotation, std::array<int, 2>{ x, y }), sf::Vector2i(x, y));
-                    //std::array<std::array<int, 8>, 8> attackedSquaresMap = getAttackMap(chessboard, currentTurn, movesNotation);
+                    std::vector<possibleMove> pMoves = getSafeMoves(getPiece(abs(currSquare)).GetPossibleMoves(chessboard, attackMap, movesNotation, std::array<int, 2>{ x, y }), sf::Vector2i(x, y));
+                    
                     //drawAttackMap(attackedSquaresMap);
 
                     //std::array<std::array<int, 8>, 8> currAttackMap = drawAttackMap(attackedSquaresMap);
@@ -227,11 +236,18 @@ bool checkIfCanMove() {
                     //checkForCheck(kingPos, currAttackMap);
                     
                     if (pMoves.size() > 0) {
-                        std::cout << "there is a move\n";
+                        std::cout << "\nthere is a move\n";
 
                         for (auto pMove : pMoves) {
                             std::cout << "___________\npiece: "<< currSquare << "\nx: " << pMove.x << "\ny : " << pMove.y << "\nmove type : " << pMove.moveType<< "\n \n";
                         }
+
+                        for (const auto& e : chessboard) {
+                            for (const auto& e1 : e)
+                                std::cout << e1 << "|";
+                            std::cout << "\n";
+                        }
+
                         return true;
                     }
                         
@@ -245,8 +261,8 @@ void drawBoard() {
 
     for (int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++) {
-            sf::RectangleShape square(sf::Vector2f(100, 100));
-            square.setPosition(sf::Vector2f(x * 100, y * 100));
+            sf::RectangleShape square(sf::Vector2f(squareSize, squareSize));
+            square.setPosition(sf::Vector2f(x * squareSize, y * squareSize));
             square.setFillColor(((x + y) % 2) ? cellColor1 : cellColor2);
             window.draw(square);
         }
@@ -265,36 +281,149 @@ void drawPieces() {
             if (pieceImgName != "") {
                 sf::Sprite pieceSprite;
                 sf::Texture pieceTexture;
+                float scale = 0.007 * squareSize;
+
+
                 pieceTexture.loadFromFile(pieceImgName);
                 pieceSprite.setTexture(pieceTexture);
-                pieceSprite.setScale(0.5,0.5);;
-                pieceSprite.setPosition(sf::Vector2f((x * 100)+ 50-pieceSprite.getLocalBounds().width/4, y * 100 + 50 - pieceSprite.getLocalBounds().height / 4));
+                pieceSprite.setScale(scale, scale);
+
+                int posX = x * squareSize + (squareSize - pieceSprite.getLocalBounds().width * scale) / 2;
+                int posY = y * squareSize + (squareSize - pieceSprite.getLocalBounds().height * scale) / 2;
+                pieceSprite.setPosition(sf::Vector2f(posX, posY));
+
                 window.draw(pieceSprite);
             }
         }
 
 }
 
+
+
+
+void login(tgui::EditBox::Ptr username)
+{
+
+    tgui::String u_name = username->getText();
+    if (u_name != "") {
+        std::cout << "logged as: " << u_name;
+        gameOn = true;
+    }
+    
+}
+
+void updateTextSize(tgui::BackendGui& gui)
+{
+    // Update the text size of all widgets in the gui, based on the current window height
+    const float windowHeight = gui.getView().getRect().height;
+    gui.setTextSize(static_cast<unsigned int>(0.07f * windowHeight)); // 7% of height
+}
+
+void loadWidgets(tgui::BackendGui& gui)
+{
+    updateTextSize(gui);
+
+    // We want the text size to be updated when the window is resized
+    gui.onViewChange([&gui] { updateTextSize(gui); });
+
+    auto editBoxUsername = tgui::EditBox::create();
+    editBoxUsername->setSize({ "66.67%", "12.5%" });
+    editBoxUsername->setPosition({ "16.67%", "16.67%" });
+    editBoxUsername->setDefaultText("Username");
+    gui.add(editBoxUsername);
+
+    auto button = tgui::Button::create("Login");
+    button->setSize({ "50%", "16.67%" });
+    button->setPosition({ "25%", "70%" });
+    gui.add(button);
+
+    // Call the login function when the button is pressed and pass the edit boxes that we created as parameters
+    // The "&" in front of "login" can be removed on newer compilers, but is kept here for compatibility with GCC < 8.
+    button->onPress(&login, editBoxUsername);
+}
+
+
+
 int main()
 {
     sf::Vector2i selectedPos = sf::Vector2i(-1, -1);
     sf::Vector2i moveFrom = sf::Vector2i(-1, -1);
 
-    while (window.isOpen()){
+    while (window.isOpen())
+    {
+
+        if (firstDraw) {
+            if (gameOn) {
+                drawBoard();
+                drawPieces();
+                gui.draw();
+                window.display();
+            }
+            else {
+                loadWidgets(gui);
+                gui.draw();
+                window.display();
+            }
+
+            firstDraw = false;
+        }
+
         sf::Event event;
-        while (window.waitEvent(event)){
+        while (window.waitEvent(event))
+        {
+            gui.handleEvent(event);
+
             if (event.type == sf::Event::Closed)
                 window.close();
+            else if (event.type == sf::Event::Resized) {
+                int h = event.size.height;
+                int w = event.size.width;
+
+                if (w < h)
+                    squareSize = w / 8;
+                else
+                    squareSize = h / 8;
+
+
+                window.setSize(sf::Vector2u(squareSize * 8, squareSize * 8));
+
+                sf::FloatRect visibleArea(0, 0, squareSize * 8, squareSize * 8);
+                window.setView(sf::View(visibleArea));
+
+
+
+                loadWidgets(gui);
+
+                selectedPos = sf::Vector2i(-1, -1);
+                moveFrom = sf::Vector2i(-1, -1);
+
+
+                
+                
+                if (gameOn) {
+                    drawBoard();
+                    drawPieces();
+                }
+                else {
+                    gui.draw();
+                }
+
+                window.display();
+            }
+            else if (event.type == sf::Event::TextEntered) {
+                if (!gameOn)
+                    gui.draw();
+                window.display();
+            }
             else if (event.type == sf::Event::MouseButtonReleased and event.mouseButton.button == sf::Mouse::Left) {
                 if (gameOn) {
                     sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
                     sf::Vector2i mousePos;
-                    mousePos = sf::Vector2i(pixelPos.x / 100, pixelPos.y / 100);
+
+                    
+                    mousePos = sf::Vector2i(pixelPos.x / squareSize, pixelPos.y / squareSize);
                     if (selectedPos != mousePos) {
                         selectedPos = mousePos;
-                        //std::cout << std::to_string(selectedPos.x) + "\n";
-                        //std::cout << std::to_string(selectedPos.y) + "\n";
-
 
                         if (moveFrom.x != -1 and moveFrom.y != -1) {
                             if (movePiece(moveFrom, selectedPos, chessboard, possibleMoves)) {
@@ -307,10 +436,10 @@ int main()
                                 std::cout << "after move \n";
                                 std::cout << currentTurn << std::endl;
 
-                                std::array<std::array<int, 8>, 8> currAttackMap = getAttackMap(chessboard, currentTurn, movesNotation);
+                                attackMap = getAttackMap(chessboard, currentTurn, movesNotation);
                                 sf::Vector2i kingPos = getKingPos(currentTurn, chessboard);
 
-                                if (checkForCheck(kingPos, currAttackMap)) {
+                                if (checkForCheck(kingPos, attackMap)) {
                                     check = true;
                                 }
                                 else {
@@ -327,8 +456,6 @@ int main()
                                         gameOn = false;
                                     }
                                 }
-
-
                             }
                             else
                             {
@@ -355,36 +482,34 @@ int main()
 
                         drawBoard();
 
+                        // Attack map & visualisation
+                        //std::array<std::array<int, 8>, 8> attackedSquaresMap = getAttackMap(chessboard, currentTurn, movesNotation);
+                        //drawAttackMap(attackedSquaresMap);
+
                         sf::Vector2i kingPos = getKingPos(currentTurn, chessboard);
                         if (check) {
                             drawSquare(kingPos, sf::Color(191, 114, 114, 150));
                         }
-                        //std::array<std::array<int, 8>, 8> currAttackMap = getAttackMap(chessboard, currentTurn, movesNotation);
-                        /*if (checkForCheck(kingPos, currAttackMap)) {
-                            checkForCheckMate();
-                        }*/
-                        //std::array<std::array<int, 8>, 8> attackedSquaresMap = getAttackMap(chessboard, currentTurn, movesNotation);
-                        //drawAttackMap(attackedSquaresMap);
-
-                        //std::array<std::array<int, 8>, 8> currAttackMap = drawAttackMap(attackedSquaresMap);
-                        //sf::Vector2i kingPos = getKingPos(currentTurn);
-                        //checkForCheck(kingPos, currAttackMap);
-
 
                         if (selectedPos != sf::Vector2i(-1, -1))
                             drawSquare(selectedPos, sf::Color(114, 191, 137, 100));
 
                         for (possibleMove possibleMove : possibleMoves)
                             drawCircle(sf::Vector2i(possibleMove.x, possibleMove.y), sf::Color(133, 133, 133, 100));
-                            //drawSquare(sf::Vector2i(possibleMove.x, possibleMove.y), sf::Color::Green);
 
                         drawPieces();
-
-                        window.display();
                     }
                 }
-                
+
+                if(!gameOn)
+                    gui.draw();
+
+                window.display();
+
+                if (firstDraw)
+                    firstDraw = false;
             }
+
         }
 
     }

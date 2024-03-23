@@ -38,7 +38,7 @@ Piece::Piece(std::string name, std::string whiteSpriteName, std::string blackSpr
 	this->localAttackSpots = localAttackSpots;
 }
 
-std::vector<possibleMove> Piece::GetPossibleMoves(std::array<std::array<int, 8>, 8> board, std::string moves, std::array<int, 2> position, bool onlyAttack) {
+std::vector<possibleMove> Piece::GetPossibleMoves(std::array<std::array<int, 8>, 8> board, std::array<std::array<int, 8>, 8> attackMap, std::string moves, std::array<int, 2> position, bool onlyAttack) {
 	
 	std::vector<possibleMove> squaresUnderAttack;
 	bool color = board[position[1]][position[0]] > 0;

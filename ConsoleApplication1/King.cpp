@@ -6,7 +6,7 @@ King::King(std::string name, std::string whiteSpriteName, std::string blackSprit
     
 }
 
-std::vector<possibleMove> King::GetPossibleMoves(std::array<std::array<int, 8>, 8> board, std::string moves, std::array<int, 2> position, bool onlyAttack)
+std::vector<possibleMove> King::GetPossibleMoves(std::array<std::array<int, 8>, 8> board, std::array<std::array<int, 8>, 8> attackMap, std::string moves, std::array<int, 2> position, bool onlyAttack)
 {
 
     int x = position[0];
@@ -43,10 +43,14 @@ std::vector<possibleMove> King::GetPossibleMoves(std::array<std::array<int, 8>, 
             if (moves.find(leftRookMove) == std::string::npos) {
 
                 bool freeSpace = board[position[1]][position[0] - 1] == 0 and
-                    board[position[1]][position[0] - 2] == 0 and
-                    board[position[1]][position[0] - 3] == 0;
+                                 board[position[1]][position[0] - 2] == 0 and
+                                 board[position[1]][position[0] - 3] == 0;
 
-                if (freeSpace) {
+                bool underAttack = attackMap[position[1]][position[0]] != 0 or
+                                   attackMap[position[1]][position[0] - 1] != 0 or
+                                   attackMap[position[1]][position[0] - 2] != 0;
+
+                if (freeSpace and !underAttack) {
                     std::cout << (color ? "\nwhite" : "\nblack") << " left\n";
                     squaresUnderAttack.push_back({ position[0] - 2, position[1], CASTLE });
                 }
@@ -56,9 +60,13 @@ std::vector<possibleMove> King::GetPossibleMoves(std::array<std::array<int, 8>, 
                 bool freeSpace = board[position[1]][position[0] + 1] == 0 and
                     board[position[1]][position[0] + 2] == 0;
 
+                bool underAttack = attackMap[position[1]][position[0]] != 0 or
+                                   attackMap[position[1]][position[0] + 1] != 0 or
+                                   attackMap[position[1]][position[0] + 2] != 0;
+
 
                 std::cout << (color ? "\nwhite" : "\nblack") << " +1: (" << board[position[1]][position[0] + 1] << "), +2: (" << board[position[1]][position[0] + 2] << ")";
-                if (freeSpace) {
+                if (freeSpace and !underAttack) {
                     std::cout << (color ? "\nwhite" : "\nblack") << " right\n";
                     squaresUnderAttack.push_back({ position[0] + 2, position[1], CASTLE });
                 }
@@ -86,6 +94,4 @@ void King::AfterMove(std::array<std::array<int, 8>, 8>& board, possibleMove move
             board[color ? 7 : 0][move.x + 1] = 0;
         }
     }
-
-
 }
