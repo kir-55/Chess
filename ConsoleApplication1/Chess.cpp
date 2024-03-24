@@ -13,6 +13,7 @@
 #include "Pawn.h"
 #include "King.h"
 #include "ChessConstants.h"
+#include "Client.h"
 
 
 
@@ -275,7 +276,7 @@ void drawBoard() {
         for (int x = 0; x < 8; x++) {
             sf::RectangleShape square(sf::Vector2f(squareSize, squareSize));
             square.setPosition(sf::Vector2f(x * squareSize, y * squareSize));
-            square.setFillColor(((x + y+currentTurn) % 2) ? cellColor1 : cellColor2);
+            square.setFillColor(((x + y) % 2) ? cellColor1 : cellColor2);
             window.draw(square);
         }
 }
@@ -539,6 +540,7 @@ int main()
 
                         sf::Vector2i kingPos = getKingPos(currentTurn, chessboard);
                         if (check) {
+                            sf::Vector2i position = currentTurn ? sf::Vector2i(7 - kingPos.x, 7 - kingPos.y) : kingPos;
                             drawSquare(kingPos, sf::Color(191, 114, 114, 150));
                         }
 
