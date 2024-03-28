@@ -14,8 +14,9 @@
 #include "King.h"
 #include "ChessConstants.h"
 #include "Client.h"
+#include <thread>
 
-
+void loadMenu(tgui::BackendGui& gui, std::string message = "");
 
 std::vector<possibleMove> possibleMoves;
 std::array<std::array<int, 8>, 8> attackMap;
@@ -34,6 +35,11 @@ int gameMode = 0;
 1 - local mode (1v1 on the same pc)
 2 - PvP by network
 */ 
+
+Client client;
+std::thread receive;
+
+
 
 
 tgui::Theme GUITheme{ CONTENT_PATH + "Theme.txt" };
@@ -312,22 +318,55 @@ void drawPieces() {
 }
 
 
-void initializeOnline() {
+void initializeOnline(const char username[]) {
     bool color = rand() % 2 == 1; // to be replaced
     currentTurn = color;
+    client = Client(username);
+
+    if (client.ready)
+    {
+        std::cout << "\nconnected!!\n";
+        receive = std::thread(&Client::ReceiveLoop, &client);
+        char message[80] = "1|";
+        strcat_s(message, "data");
+        client.SendPacket(message);
+        std::cout << "test\n";
+    }
+    else {
+        std::cout << "connection failed!!\n";
+        gameMode = 0;
+        loadMenu(gui, "connection failed!!");
+    }
+    //std::thread receive(client{client.receiveloop();});
 
 }
+
     
 
 
 void play(tgui::EditBox::Ptr username, int mode)
 {
+    gui.removeAllWidgets();
     tgui::String u_name = username->getText();
     if (u_name != "") {
         std::cout << "logged as: " << u_name;
         gameMode = mode;
-        if (gameMode == 2)
-            initializeOnline();
+
+        
+        //std::basic_string<char32_t> name = u_name.c_str();
+        //char username_L[80];
+        //strcpy(username_L ,  u_name.c_str());
+        
+        if (gameMode == 2) {
+            // Convert tgui::String to std::string, then to const char*
+            std::string u_name_str;
+            for (std::size_t i = 0; i < u_name.length(); ++i) {
+                u_name_str += static_cast<char>(u_name[i]);
+            }
+            const char* u_name_cstr = u_name_str.c_str();
+            initializeOnline(u_name_cstr);
+        }
+            ///error uname is type of tgui::string and i need const char *
     }
 }
 
@@ -339,7 +378,7 @@ void updateTextSize(tgui::BackendGui& gui)
 }
 
 
-void loadMenu(tgui::BackendGui& gui, std::string message = "")
+void loadMenu(tgui::BackendGui& gui, std::string message)
 {
     updateTextSize(gui);
 
@@ -378,13 +417,14 @@ void loadMenu(tgui::BackendGui& gui, std::string message = "")
     // Call the login function when the button is pressed and pass the edit boxes that we created as parameters
     // The "&" in front of "login" can be removed on newer compilers, but is kept here for compatibility with GCC < 8.
     playOffline->onPress(&play, editBoxUsername, 1);
-    playOnline->onPress(&play, editBoxUsername, 1);
+    playOnline->onPress(&play, editBoxUsername, 2);
 }
 
 
 
 int main()
 {
+    
     srand(time(0)); // to be replaced
 
     sf::Vector2i selectedPos = sf::Vector2i(-1, -1);
@@ -561,6 +601,9 @@ int main()
                 }
 
                 if (gameMode == 0) {
+                    if (receive.joinable())
+                        receive.join();
+
                     window.clear(backgroundColor);
                     gui.draw();
                 }
@@ -575,7 +618,11 @@ int main()
 
         }
 
+
     }
+
+    if (receive.joinable())
+        receive.join();
 
     return 0;
 }
