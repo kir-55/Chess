@@ -22,8 +22,12 @@ std::vector<possibleMove> possibleMoves;
 std::array<std::array<int, 8>, 8> attackMap;
 std::string movesNotation;
 
-bool canMove = true;
+sf::Vector2i selectedPos = sf::Vector2i(-1, -1);
+sf::Vector2i moveFrom = sf::Vector2i(-1, -1);
+
 bool currentTurn = true;
+bool playerColor = true;
+
 bool firstDraw = true;
 bool check = false;
 int selectedPiece;
@@ -36,10 +40,8 @@ int gameMode = 0;
 2 - PvP by network
 */ 
 
-Client client;
+Client* client = nullptr;
 std::thread receive;
-
-
 
 
 tgui::Theme GUITheme{ CONTENT_PATH + "Theme.txt" };
@@ -52,7 +54,8 @@ sf::Color GUIColor(86, 191, 82);
 sf::RenderWindow window(sf::VideoMode(800, 800), "Chess");
 tgui::Gui gui{ window };
 
-std::array<std::array<int, 8>, 8> chessboard{{
+std::array<std::array<int, 8>, 8> chessboard;
+std::array<std::array<int, 8>, 8> initialChessboard{{
     {-1, -2, -3, -4, -5, -3, -2, -1},
     {-6, -6, -6, -6, -6, -6, -6, -6},
     { 0,  0,  0,  0,  0,  0,  0,  0},
@@ -137,6 +140,9 @@ bool movePiece(sf::Vector2i from, sf::Vector2i to, std::array<std::array<int, 8>
             if (&board == &chessboard) {
                 movesNotation += (" | " + moveNote);
                 currentTurn = !currentTurn;
+
+                if (gameMode == 1)
+                    playerColor = currentTurn;
             }
             possibleMoves = {};
             return true;
@@ -235,10 +241,15 @@ void selectPiece(sf::Vector2i position) {
         selectedPiece = pieceId;
         std::array<int, 2> pos = std::array<int, 2>{ position.x, position.y };
         possibleMoves = getSafeMoves(getPiece(abs(pieceId)).GetPossibleMoves(chessboard, attackMap, movesNotation, pos), position);
-
+        std::cout << "there is a piece!\n";
     }
-    else
+    else {
+        std::cout << "there is NO piece!\n";
+        std::cout << "there is: " << pieceId;
+
         possibleMoves = {};
+    }
+        
 }
 
 bool checkIfCanMove() {
@@ -307,30 +318,26 @@ void drawPieces() {
                 pieceSprite.setTexture(pieceTexture);
                 pieceSprite.setScale(scale, scale);
 
-                int posX = (currentTurn? x : 7-x) * squareSize + (squareSize - pieceSprite.getLocalBounds().width * scale) / 2;
-                int posY = (currentTurn ? y : 7 - y) * squareSize + (squareSize - pieceSprite.getLocalBounds().height * scale) / 2;
+                int posX = (playerColor? x : 7 - x) * squareSize + (squareSize - pieceSprite.getLocalBounds().width * scale) / 2;
+                int posY = (playerColor? y : 7 - y) * squareSize + (squareSize - pieceSprite.getLocalBounds().height * scale) / 2;
                 pieceSprite.setPosition(sf::Vector2f(posX, posY));
 
                 window.draw(pieceSprite);
             }
         }
-
 }
 
-
 void initializeOnline(const char username[]) {
-    bool color = rand() % 2 == 1; // to be replaced
-    currentTurn = color;
-    client = Client(username);
+    client = new Client(username);
 
-    if (client.ready)
+    if (client->ready)
     {
         std::cout << "\nconnected!!\n";
-        receive = std::thread(&Client::ReceiveLoop, &client);
-        char message[80] = "1|";
-        strcat_s(message, "data");
-        client.SendPacket(message);
-        std::cout << "test\n";
+        receive = std::thread(&Client::ReceiveLoop, client);
+        bool color = client->GetColor();
+        playerColor = color;
+        currentTurn = true;
+        std::cout << "Color: " << color << "\n";
     }
     else {
         std::cout << "connection failed!!\n";
@@ -341,17 +348,34 @@ void initializeOnline(const char username[]) {
 
 }
 
-    
-
+void sendMove(sf::Vector2i from, sf::Vector2i to) {
+    std::string x = "0|" + std::to_string((from.x+1)*1000 + (from.y+1)*100 + (to.x+1)*10 + to.y + 1);
+    const char* data = x.c_str();
+    /// <summary>
+    /// digits:
+    /// 1 - from x
+    /// 2 - from y
+    /// 3 - to x
+    /// 4 - to y
+    /// </summary>
+    std::cout << "sent move(string): " << x << "\n";
+    std::cout << "sent move(char): " << data << "\n";
+    client->SendPacket(data);
+}
 
 void play(tgui::EditBox::Ptr username, int mode)
 {
-    gui.removeAllWidgets();
     tgui::String u_name = username->getText();
     if (u_name != "") {
+        gui.removeAllWidgets();
         std::cout << "logged as: " << u_name;
         gameMode = mode;
-
+        chessboard = initialChessboard;
+        currentTurn = true;
+        playerColor = true;
+        possibleMoves = {};
+        movesNotation = "";
+        check = false;
         
         //std::basic_string<char32_t> name = u_name.c_str();
         //char username_L[80];
@@ -376,7 +400,6 @@ void updateTextSize(tgui::BackendGui& gui)
     const float windowHeight = gui.getView().getRect().height;
     gui.setTextSize(static_cast<unsigned int>(0.07f * windowHeight)); // 7% of height
 }
-
 
 void loadMenu(tgui::BackendGui& gui, std::string message)
 {
@@ -420,25 +443,86 @@ void loadMenu(tgui::BackendGui& gui, std::string message)
     playOnline->onPress(&play, editBoxUsername, 2);
 }
 
+bool processStep(sf::Vector2i from, sf::Vector2i to) {
+    if (movePiece(from, to, chessboard, possibleMoves)) {
+        attackMap = getAttackMap(chessboard, currentTurn, movesNotation);
+        sf::Vector2i kingPos = getKingPos(currentTurn, chessboard);
 
+        if (checkForCheck(kingPos, attackMap)) {
+            check = true;
+        }
+        else {
+            check = false;
+        }
+
+        if (gameMode == 2)
+            sendMove(from, to);
+
+        if (!checkIfCanMove()) {
+            if (check) {
+                std::cout << "Checkmate!\n" << (currentTurn ? "Black" : "White") << " won.\n";
+                gameMode = 0;
+                std::string Winner = currentTurn ? "Black" : "White";
+                delete client;
+                client = nullptr;
+
+                loadMenu(gui, "Checkmate!\n" + Winner + " won.");
+            }
+            else {
+                std::cout << "Stalemate!\n Its draw.";
+                gameMode = 0;
+                delete client;
+                client = nullptr;
+                loadMenu(gui, "Stalemate!\n Its draw.");
+            }
+        }
+
+
+
+        return true;
+    }
+    return false;
+}
+
+void draw() {
+    window.clear();
+
+    drawBoard();
+
+    // Attack map & visualisation
+    //std::array<std::array<int, 8>, 8> attackedSquaresMap = getAttackMap(chessboard, currentTurn, movesNotation);
+    //drawAttackMap(attackedSquaresMap);
+
+    sf::Vector2i kingPos = getKingPos(currentTurn, chessboard);
+    if (check) {
+        sf::Vector2i position = playerColor ? kingPos : sf::Vector2i(7 - kingPos.x, 7 - kingPos.y);
+        drawSquare(position, sf::Color(191, 114, 114, 150));
+    }
+
+    if (selectedPos != sf::Vector2i(-1, -1)) {
+        sf::Vector2i position = playerColor ? selectedPos : sf::Vector2i(7 - selectedPos.x, 7 - selectedPos.y);
+        drawSquare(position, sf::Color(114, 191, 137, 100));
+    }
+
+
+    for (possibleMove possibleMove : possibleMoves) {
+        sf::Vector2i position = playerColor ? sf::Vector2i(possibleMove.x, possibleMove.y)
+            : sf::Vector2i(7 - possibleMove.x, 7 - possibleMove.y);
+        drawCircle(position, sf::Color(133, 133, 133, 100));
+    }
+
+    drawPieces();
+    window.display();
+    
+}
 
 int main()
 {
-    
-    srand(time(0)); // to be replaced
-
-    sf::Vector2i selectedPos = sf::Vector2i(-1, -1);
-    sf::Vector2i moveFrom = sf::Vector2i(-1, -1);
-
     while (window.isOpen())
     {
-
         if (firstDraw) {
             if (gameMode != 0) {
-                drawBoard();
-                drawPieces();
-                gui.draw();
-                window.display();
+                draw();
             }
             else {
                 loadMenu(gui);
@@ -451,8 +535,27 @@ int main()
         }
 
         sf::Event event;
-        while (window.waitEvent(event))
+        while ((client != nullptr and client->lastMove != 0) or window.waitEvent(event))
         {
+            if (gameMode == 2 and (client != nullptr and client->lastMove != 0)) {
+
+                sf::Vector2i from((client->lastMove / 1000) - 1, (client->lastMove / 100 % 10) - 1);
+                sf::Vector2i to((client->lastMove / 10 % 10) - 1, (client->lastMove % 10) - 1);
+
+                selectPiece(from);
+                if (processStep(from, to)) {
+                    draw();
+                    std::cout << "success\n";
+                }
+                else {
+                    std::cout << "no success\n";
+                }
+                if(client != nullptr)
+                    client->lastMove = 0;
+            }
+
+
+
             gui.handleEvent(event);
 
             if (event.type == sf::Event::Closed)
@@ -472,16 +575,9 @@ int main()
                 sf::FloatRect visibleArea(0, 0, squareSize * 8, squareSize * 8);
                 window.setView(sf::View(visibleArea));
 
-
-
-                //loadWidgets(gui);
-
                 selectedPos = sf::Vector2i(-1, -1);
                 moveFrom = sf::Vector2i(-1, -1);
 
-
-                
-                
                 if (gameMode != 0) {
                     drawBoard();
                     drawPieces();
@@ -501,12 +597,13 @@ int main()
                     
                 window.display();
             }
-            else if (event.type == sf::Event::MouseButtonReleased and event.mouseButton.button == sf::Mouse::Left) {
+            else if (event.type == sf::Event::MouseButtonReleased and event.mouseButton.button == sf::Mouse::Left                             ) {
+                std::cout << "gameMode: " << gameMode << "\n";
                 if (gameMode != 0) {
                     sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
                     sf::Vector2i mousePos;
 
-                    if(currentTurn)
+                    if(playerColor)
                         mousePos = sf::Vector2i(pixelPos.x / squareSize, pixelPos.y / squareSize);
                     else
                         mousePos = sf::Vector2i(7-pixelPos.x / squareSize, 7-pixelPos.y / squareSize);
@@ -514,89 +611,35 @@ int main()
                     if (selectedPos != mousePos) {
                         selectedPos = mousePos;
 
-                        if (moveFrom.x != -1 and moveFrom.y != -1) {
-                            if (movePiece(moveFrom, selectedPos, chessboard, possibleMoves)) {
-
-
-                                moveFrom = sf::Vector2i(-1, -1);
-                                selectedPos = sf::Vector2i(-1, -1);
-
-                                //check for the checkmate
-                                std::cout << "after move \n";
-                                std::cout << currentTurn << std::endl;
-
-                                attackMap = getAttackMap(chessboard, currentTurn, movesNotation);
-                                sf::Vector2i kingPos = getKingPos(currentTurn, chessboard);
-
-                                if (checkForCheck(kingPos, attackMap)) {
-                                    check = true;
+                        if (playerColor == currentTurn) {
+                            if (moveFrom.x != -1 and moveFrom.y != -1) {
+                                if (processStep(moveFrom, selectedPos)) {
+                                    selectedPos = sf::Vector2i(-1, -1);
+                                    moveFrom = sf::Vector2i(-1, -1);
                                 }
                                 else {
-                                    check = false;
-                                }
-
-                                if (!checkIfCanMove()) {
-                                    if (check) {
-                                        std::cout << "Checkmate!\n" << (currentTurn ? "Black" : "White") << " won.\n";
-                                        gameMode = 0;
-                                        std::string Winner = currentTurn ? "Black" : "White";
-                                        loadMenu(gui,"Checkmate!\n" + Winner + " won.");
+                                    possibleMoves = {};
+                                    if (playerColor ? (getPiece(selectedPos) > 0) : (getPiece(selectedPos) < 0))
+                                    {
+                                        selectPiece(selectedPos);
+                                        moveFrom = selectedPos;
                                     }
                                     else {
-                                        std::cout << "Stalemate!\n Its draw.";
-                                        gameMode = 0;
-                                        loadMenu(gui, "Stalemate!\n Its draw.");
+                                        moveFrom = sf::Vector2i(-1, -1);
+                                        selectedPos = sf::Vector2i(-1, -1);
                                     }
                                 }
                             }
-                            else
-                            {
-                                possibleMoves = {};
-                                if (currentTurn ? (getPiece(selectedPos) > 0) : (getPiece(selectedPos) < 0))
-                                {
-                                    selectPiece(selectedPos);
-                                    moveFrom = selectedPos;
-                                }
-                                else {
-                                    moveFrom = sf::Vector2i(-1, -1);
-                                    selectedPos = sf::Vector2i(-1, -1);
-                                }
+                            else if (getPiece(selectedPos) != 0) {
+                                selectPiece(selectedPos);
+                                moveFrom = selectedPos;
                             }
-                        }
-                        else if (getPiece(selectedPos) != 0) {
-                            selectPiece(selectedPos);
-                            moveFrom = selectedPos;
-                        }
-                        else
-                            selectedPos = sf::Vector2i(-1, -1);
-
-                        window.clear();
-
-                        drawBoard();
-
-                        // Attack map & visualisation
-                        //std::array<std::array<int, 8>, 8> attackedSquaresMap = getAttackMap(chessboard, currentTurn, movesNotation);
-                        //drawAttackMap(attackedSquaresMap);
-
-                        sf::Vector2i kingPos = getKingPos(currentTurn, chessboard);
-                        if (check) {
-                            sf::Vector2i position = currentTurn ? sf::Vector2i(7 - kingPos.x, 7 - kingPos.y) : kingPos;
-                            drawSquare(kingPos, sf::Color(191, 114, 114, 150));
-                        }
-
-                        if (selectedPos != sf::Vector2i(-1, -1)) {
-                            sf::Vector2i position = currentTurn ? selectedPos : sf::Vector2i(7 - selectedPos.x, 7 - selectedPos.y);
-                            drawSquare(position, sf::Color(114, 191, 137, 100));
+                            else
+                                selectedPos = sf::Vector2i(-1, -1);
                         }
                             
 
-                        for (possibleMove possibleMove : possibleMoves){
-                            sf::Vector2i position = currentTurn ? sf::Vector2i(possibleMove.x, possibleMove.y)
-                                                                : sf::Vector2i(7 - possibleMove.x, 7 - possibleMove.y);
-                            drawCircle(position, sf::Color(133, 133, 133, 100));
-                        }
-
-                        drawPieces();
+                        draw();
                     }
                 }
 
@@ -606,11 +649,8 @@ int main()
 
                     window.clear(backgroundColor);
                     gui.draw();
+                    window.display();
                 }
-
-                    
-
-                window.display();
 
                 if (firstDraw)
                     firstDraw = false;

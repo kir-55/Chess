@@ -2,13 +2,13 @@
 #include <iostream>
 #include <enet/enet.h>
 #include <thread>
-#include <ctime>
 
 
 ClientData::ClientData(int id) : m_id(id) {};
 void ClientData::SetUsername(std::string usernameL) { m_username = usernameL; }
 int ClientData::GetId() { return m_id; }
 std::string ClientData::GetUsername() { return m_username; }
+
 
 
 void Client::SendPacket(const char* data) {
@@ -22,6 +22,12 @@ void Client::ParseData(char* data) {
 	sscanf_s(data, "%d|%d", &data_type, &id);
 
 	switch (data_type) {
+	case 0:
+		if (id != CLIENT_ID) {
+			sscanf_s(data, "%*[^|]|%*[^|]|%d", &lastMove);
+			std::cout << "recieved move: " << lastMove << "\n";
+		}
+		break;
 	case 1:
 		if (id != CLIENT_ID) {
 			char msg[80];
@@ -41,6 +47,8 @@ void Client::ParseData(char* data) {
 		}
 		break;
 	case 3:
+		sscanf_s(data, "%*[^|]|%*[^|]|%d", &m_color);
+		std::cout << "recieved color: " << m_color << "\n";
 		CLIENT_ID = id;
 		break;
 	}
@@ -67,9 +75,14 @@ void* Client::ReceiveLoop() {
 	
 }
 
-void SendData(const char* data) {
-
-
+bool Client::GetColor() {
+	while (true) {
+		if (m_color != 0)
+			return m_color == 1 ? true : false;
+		else
+			std::cout << "color is zero\n";
+	}
+		
 }
 
 ENetHost* Client::GetClient() {
@@ -80,7 +93,12 @@ Client::Client() {
 
 }
 
-Client::Client(const char username[], std::string adress, int port) {
+Client::~Client(){
+	fprintf(stderr, "exitet ENet!");
+	enet_deinitialize();
+}
+
+Client::Client(const char username[], const char *host, int port) {
 	if (enet_initialize() != 0) {
 		fprintf(stderr, "an error occurred (1)!");
 		enet_deinitialize();
@@ -100,8 +118,8 @@ Client::Client(const char username[], std::string adress, int port) {
 	ENetEvent event;
 	
 
-	enet_address_set_host(&address, "127.0.0.1");
-	address.port = 7777;
+	enet_address_set_host(&address, host);
+	address.port = port;
 
 	m_peer = enet_host_connect(m_client, &address, 1, 0);
 
