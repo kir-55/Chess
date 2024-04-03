@@ -29,7 +29,7 @@ private:
 					// 0 - hasn't been given 
 				   // 1 - white
 				  // 2 - black
-
+	
 	//int m_lastMove = 0; // last move that OPONENT did
 
 	ENetHost* m_client;
@@ -43,7 +43,7 @@ public:
 
 	std::map<int, ClientData*> client_map;
 	int lastMove = 0;
-
+	bool recieve = true;
 	char username[80];
 	bool ready = false;
 
@@ -51,7 +51,7 @@ public:
 
 	void ParseData(char* data);
 
-	void* ReceiveLoop();
+	void ReceiveLoop();
 
 	bool GetColor();
 

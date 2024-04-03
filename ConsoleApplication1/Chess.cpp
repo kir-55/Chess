@@ -419,7 +419,7 @@ void loadMenu(tgui::BackendGui& gui, std::string message)
 
     auto editBoxUsername = tgui::EditBox::create();
     editBoxUsername->setSize({ "66.67%", "12.5%" });
-    editBoxUsername->setPosition({ "16.67%", "30%" });
+    editBoxUsername->setPosition({ "16.67%", "10%" });
     editBoxUsername->setDefaultText("Nickname");
     editBoxUsername->setMaximumCharacters(80);
     editBoxUsername->setRenderer(GUITheme.getRenderer("EditBox"));
@@ -427,20 +427,27 @@ void loadMenu(tgui::BackendGui& gui, std::string message)
 
     auto playOffline = tgui::Button::create("Play offline");
     playOffline->setSize({ "50%", "16.67%" });
-    playOffline->setPosition({ "25%", "50%" });
+    playOffline->setPosition({ "25%", "30%" });
     playOffline->setRenderer(GUITheme.getRenderer("Button"));
     gui.add(playOffline);
 
     auto playOnline = tgui::Button::create("Play online");
     playOnline->setSize({ "50%", "16.67%" });
-    playOnline->setPosition({ "25%", "70%" });
+    playOnline->setPosition({ "25%", "50%" });
     playOnline->setRenderer(GUITheme.getRenderer("Button"));
     gui.add(playOnline);
+
+    auto playBot = tgui::Button::create("Play with bot");
+    playBot->setSize({ "50%", "16.67%" });
+    playBot->setPosition({ "25%", "70%" });
+    playBot->setRenderer(GUITheme.getRenderer("Button"));
+    gui.add(playBot);
 
     // Call the login function when the button is pressed and pass the edit boxes that we created as parameters
     // The "&" in front of "login" can be removed on newer compilers, but is kept here for compatibility with GCC < 8.
     playOffline->onPress(&play, editBoxUsername, 1);
     playOnline->onPress(&play, editBoxUsername, 2);
+    playBot->onPress(&play, editBoxUsername, 3);
 }
 
 bool processStep(sf::Vector2i from, sf::Vector2i to) {
@@ -455,7 +462,7 @@ bool processStep(sf::Vector2i from, sf::Vector2i to) {
             check = false;
         }
 
-        if (gameMode == 2)
+        if (gameMode == 2 and currentTurn != playerColor)//move allready has been done so current turn has been changed
             sendMove(from, to);
 
         if (!checkIfCanMove()) {
@@ -463,6 +470,10 @@ bool processStep(sf::Vector2i from, sf::Vector2i to) {
                 std::cout << "Checkmate!\n" << (currentTurn ? "Black" : "White") << " won.\n";
                 gameMode = 0;
                 std::string Winner = currentTurn ? "Black" : "White";
+                client->recieve = false;
+                if (receive.joinable())
+                    receive.join();
+                std::cout << "joined";
                 delete client;
                 client = nullptr;
 
@@ -471,6 +482,8 @@ bool processStep(sf::Vector2i from, sf::Vector2i to) {
             else {
                 std::cout << "Stalemate!\n Its draw.";
                 gameMode = 0;
+                if (receive.joinable())
+                    receive.join();
                 delete client;
                 client = nullptr;
                 loadMenu(gui, "Stalemate!\n Its draw.");
@@ -598,7 +611,6 @@ int main()
                 window.display();
             }
             else if (event.type == sf::Event::MouseButtonReleased and event.mouseButton.button == sf::Mouse::Left                             ) {
-                std::cout << "gameMode: " << gameMode << "\n";
                 if (gameMode != 0) {
                     sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
                     sf::Vector2i mousePos;
@@ -644,8 +656,7 @@ int main()
                 }
 
                 if (gameMode == 0) {
-                    if (receive.joinable())
-                        receive.join();
+
 
                     window.clear(backgroundColor);
                     gui.draw();

@@ -24,8 +24,9 @@ void Client::ParseData(char* data) {
 	switch (data_type) {
 	case 0:
 		if (id != CLIENT_ID) {
+			
 			sscanf_s(data, "%*[^|]|%*[^|]|%d", &lastMove);
-			std::cout << "recieved move: " << lastMove << "\n";
+			std::cout << "recieved move: " << lastMove << "from id: " << id << "\n";
 		}
 		break;
 	case 1:
@@ -54,12 +55,13 @@ void Client::ParseData(char* data) {
 	}
 }
 
-void* Client::ReceiveLoop() {
+void Client::ReceiveLoop() {
 	
 		ENetHost* client = GetClient();
-		while (true) {
+		while (recieve) {
 			try {
 				ENetEvent event;
+				std::cout << "c: "<< rand() << "\n";
 				while (enet_host_service(client, &event, 0) > 0) {
 					if (event.type == ENET_EVENT_TYPE_RECEIVE) {
 						ParseData((char*)(event.packet->data));
@@ -99,6 +101,8 @@ Client::~Client(){
 }
 
 Client::Client(const char username[], const char *host, int port) {
+	recieve = true;
+
 	if (enet_initialize() != 0) {
 		fprintf(stderr, "an error occurred (1)!");
 		enet_deinitialize();
