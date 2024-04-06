@@ -498,7 +498,7 @@ bool processStep(sf::Vector2i from, sf::Vector2i to) {
 }
 
 void draw() {
-    window.clear();
+    window.clear(sf::Color(255, 255, 255));
 
     drawBoard();
 
