@@ -16,6 +16,11 @@
 #include "Client.h"
 #include <thread>
 
+struct globalMove : public possibleMove {
+    int fromX;
+    int fromY;
+};
+
 void loadMenu(tgui::BackendGui& gui, std::string message = "");
 
 std::vector<possibleMove> possibleMoves;
@@ -115,40 +120,34 @@ Piece& getPiece(int piece) {
     }
 }
 
-bool movePiece(sf::Vector2i from, sf::Vector2i to, std::array<std::array<int, 8>, 8>& board, std::vector<possibleMove> moves) {
+void movePiece(globalMove globalMove, std::array<std::array<int, 8>, 8>& board) {
+    //local selected piece
+    sf::Vector2i from(globalMove.fromX, globalMove.fromY);
+    sf::Vector2i to(globalMove.x, globalMove.y);
 
-    for (possibleMove possibleMove : moves) {
-        if (possibleMove.x == to.x and possibleMove.y == to.y) {
+    int sp = getPiece(from);
 
+    board[from.y][from.x] = 0;
+    board[to.y][to.x] = sp;
+    std::string moveNote = std::string(1, abc[from.x]) + std::to_string(from.y + 1) + " " + std::string(1, abc[to.x]) + std::to_string(to.y + 1);
 
-            //local selected piece
-            int sp = getPiece(from);
+    /*std::cout << "\nto x: " << to.x << " to y: " << to.y << "\n";
+    std::cout << "________\n";
+    for (const auto& e : board) {
+        for (const auto& e1 : e)
+            std::cout << e1 << "|";
+        std::cout << "\n";
+    }*/
+    //std::cout << possibleMove.moveType << "\n";
+    getPiece(abs(sp)).AfterMove(board, globalMove);
+    if (&board == &chessboard) {
+        movesNotation += (" | " + moveNote);
+        currentTurn = !currentTurn;
 
-            board[from.y][from.x] = 0;
-            board[to.y][to.x] = sp;
-            std::string moveNote = std::string(1, abc[from.x]) + std::to_string(from.y + 1) + " " + std::string(1, abc[to.x]) + std::to_string(to.y + 1);
-
-            /*std::cout << "\nto x: " << to.x << " to y: " << to.y << "\n";
-            std::cout << "________\n";
-            for (const auto& e : board) {
-                for (const auto& e1 : e)
-                    std::cout << e1 << "|";
-                std::cout << "\n";
-            }*/
-            //std::cout << possibleMove.moveType << "\n";
-            getPiece(abs(sp)).AfterMove(board, possibleMove);
-            if (&board == &chessboard) {
-                movesNotation += (" | " + moveNote);
-                currentTurn = !currentTurn;
-
-                if (gameMode == 1)
-                    playerColor = currentTurn;
-            }
-            possibleMoves = {};
-            return true;
-        }
+        if (gameMode == 1)
+            playerColor = currentTurn;
     }
-    return false;
+    possibleMoves = {};
 }
 
 std::array<std::array<int, 8>, 8> getAttackMap(std::array<std::array<int, 8>, 8> board, bool color, std::string moves) {
@@ -214,22 +213,29 @@ std::vector<possibleMove> getSafeMoves(std::vector<possibleMove> moves, sf::Vect
     //std::cout << "--------\n";
     for (possibleMove move : moves) {
         std::array<std::array<int, 8>, 8> vrtBoard = chessboard;
-        if (movePiece(from, sf::Vector2i(move.x, move.y), vrtBoard, moves)) {
+        globalMove g;
+        g.fromX = from.x;
+        g.fromY = from.y;
+        g.x = move.x;
+        g.y = move.y;
+        g.moveType = move.moveType;
+
+        movePiece(g, vrtBoard);
             
-            std::array<std::array<int, 8>, 8> vrtAttackMap = getAttackMap(vrtBoard, currentTurn, movesNotation);
+        std::array<std::array<int, 8>, 8> vrtAttackMap = getAttackMap(vrtBoard, currentTurn, movesNotation);
 
-            /*for (const auto& e : vrtAttackMap) {
-                for (const auto& e1 : e)
-                    std::cout << e1;
-                std::cout << "\n";
-            }*/
-            //std::cout << "----------\n";
+        /*for (const auto& e : vrtAttackMap) {
+            for (const auto& e1 : e)
+                std::cout << e1;
+            std::cout << "\n";
+        }*/
+        //std::cout << "----------\n";
 
-            //drawAttackMap(vrtAttackMap);
+        //drawAttackMap(vrtAttackMap);
 
-            if (!checkForCheck(getKingPos(currentTurn, vrtBoard), vrtAttackMap))
-                safeMoves.push_back(move);
-        }
+        if (!checkForCheck(getKingPos(currentTurn, vrtBoard), vrtAttackMap))
+            safeMoves.push_back(move);
+        
         
     }
     return safeMoves;
@@ -252,39 +258,25 @@ void selectPiece(sf::Vector2i position) {
         
 }
 
-bool checkIfCanMove() {
+std::vector<globalMove> getAllMoves() {
+    std::vector<globalMove> gMoves;
     for (int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++){
             int currSquare = chessboard[y][x];
             if (currentTurn ? currSquare > 0 : currSquare < 0) {
-                    std::vector<possibleMove> pMoves = getSafeMoves(getPiece(abs(currSquare)).GetPossibleMoves(chessboard, attackMap, movesNotation, std::array<int, 2>{ x, y }), sf::Vector2i(x, y));
-                    
-                    //drawAttackMap(attackedSquaresMap);
-
-                    //std::array<std::array<int, 8>, 8> currAttackMap = drawAttackMap(attackedSquaresMap);
-                    //sf::Vector2i kingPos = getKingPos(currentTurn);
-                    //checkForCheck(kingPos, currAttackMap);
-                    
-                    if (pMoves.size() > 0) {
-                        std::cout << "\nthere is a move\n";
-
-                        for (auto pMove : pMoves) {
-                            std::cout << "___________\npiece: "<< currSquare << "\nx: " << pMove.x << "\ny : " << pMove.y << "\nmove type : " << pMove.moveType<< "\n \n";
-                        }
-
-                        for (const auto& e : chessboard) {
-                            for (const auto& e1 : e)
-                                std::cout << e1 << "|";
-                            std::cout << "\n";
-                        }
-
-                        return true;
-                    }
-                        
+                std::vector<possibleMove> pMoves = getSafeMoves(getPiece(abs(currSquare)).GetPossibleMoves(chessboard, attackMap, movesNotation, std::array<int, 2>{ x, y }), sf::Vector2i(x, y));
+                for (const auto pMove : pMoves) {
+                    globalMove g;
+                    g.x = pMove.x;
+                    g.y = pMove.y;
+                    g.moveType = pMove.moveType;
+                    g.fromX = x;
+                    g.fromY = y;
+                    gMoves.push_back(g);
+                }          
             }
         }
-    std::cout << "cannot move";
-    return false;
+    return gMoves;
 }
 
 void drawBoard() {
@@ -410,7 +402,7 @@ void loadMenu(tgui::BackendGui& gui, std::string message)
     if (message != "") {
         auto label = tgui::Label::create();
         label->setText(message);
-        label->setPosition({ "28%", "10%" });
+        label->setPosition({ "28%", "2%" });
         label->setTextSize(24);
         label->setRenderer(GUITheme.getRenderer("Label"));
         gui.add(label);
@@ -419,7 +411,7 @@ void loadMenu(tgui::BackendGui& gui, std::string message)
 
     auto editBoxUsername = tgui::EditBox::create();
     editBoxUsername->setSize({ "66.67%", "12.5%" });
-    editBoxUsername->setPosition({ "16.67%", "10%" });
+    editBoxUsername->setPosition({ "16.67%", "20%" });
     editBoxUsername->setDefaultText("Nickname");
     editBoxUsername->setMaximumCharacters(80);
     editBoxUsername->setRenderer(GUITheme.getRenderer("EditBox"));
@@ -427,19 +419,19 @@ void loadMenu(tgui::BackendGui& gui, std::string message)
 
     auto playOffline = tgui::Button::create("Play offline");
     playOffline->setSize({ "50%", "16.67%" });
-    playOffline->setPosition({ "25%", "30%" });
+    playOffline->setPosition({ "25%", "40%" });
     playOffline->setRenderer(GUITheme.getRenderer("Button"));
     gui.add(playOffline);
 
     auto playOnline = tgui::Button::create("Play online");
     playOnline->setSize({ "50%", "16.67%" });
-    playOnline->setPosition({ "25%", "50%" });
+    playOnline->setPosition({ "25%", "60%" });
     playOnline->setRenderer(GUITheme.getRenderer("Button"));
     gui.add(playOnline);
 
     auto playBot = tgui::Button::create("Play with bot");
     playBot->setSize({ "50%", "16.67%" });
-    playBot->setPosition({ "25%", "70%" });
+    playBot->setPosition({ "25%", "80%" });
     playBot->setRenderer(GUITheme.getRenderer("Button"));
     gui.add(playBot);
 
@@ -451,50 +443,80 @@ void loadMenu(tgui::BackendGui& gui, std::string message)
 }
 
 bool processStep(sf::Vector2i from, sf::Vector2i to) {
-    if (movePiece(from, to, chessboard, possibleMoves)) {
-        attackMap = getAttackMap(chessboard, currentTurn, movesNotation);
-        sf::Vector2i kingPos = getKingPos(currentTurn, chessboard);
+    for (const auto pMove : possibleMoves) {
+        if (to.x == pMove.x and to.y == pMove.y) {
+            globalMove g;
+            g.fromX = from.x;
+            g.fromY = from.y;
+            g.x = to.x;
+            g.y = to.y;
+            g.moveType = pMove.moveType;
+           
+            
+            movePiece(g, chessboard);
 
-        if (checkForCheck(kingPos, attackMap)) {
-            check = true;
-        }
-        else {
-            check = false;
-        }
+            attackMap = getAttackMap(chessboard, currentTurn, movesNotation);
+            sf::Vector2i kingPos = getKingPos(currentTurn, chessboard);
 
-        if (gameMode == 2 and currentTurn != playerColor)//move allready has been done so current turn has been changed
-            sendMove(from, to);
-
-        if (!checkIfCanMove()) {
-            if (check) {
-                std::cout << "Checkmate!\n" << (currentTurn ? "Black" : "White") << " won.\n";
-                gameMode = 0;
-                std::string Winner = currentTurn ? "Black" : "White";
-                client->recieve = false;
-                if (receive.joinable())
-                    receive.join();
-                std::cout << "joined";
-                delete client;
-                client = nullptr;
-
-                loadMenu(gui, "Checkmate!\n" + Winner + " won.");
+            if (checkForCheck(kingPos, attackMap)) {
+                check = true;
             }
             else {
-                std::cout << "Stalemate!\n Its draw.";
-                gameMode = 0;
-                if (receive.joinable())
-                    receive.join();
-                delete client;
-                client = nullptr;
-                loadMenu(gui, "Stalemate!\n Its draw.");
+                check = false;
             }
+
+            if (gameMode == 2 and currentTurn != playerColor)//move allready has been done so current turn has been changed
+                sendMove(from, to);
+
+            if (getAllMoves().size() == 0) {
+                if (check) {
+                    std::cout << "Checkmate!\n" << (currentTurn ? "Black" : "White") << " won.\n";
+                    gameMode = 0;
+                    std::string Winner = currentTurn ? "Black" : "White";
+
+                    if (gameMode == 3 and client != nullptr) {
+                        client->recieve = false;
+                        if (receive.joinable()) {
+                            receive.join();
+                        }
+
+                        delete client;
+                        client = nullptr;
+                    }
+
+                    loadMenu(gui, "Checkmate!\n" + Winner + " won.");
+                }
+                else {
+                    std::cout << "Stalemate!\n Its draw.";
+                    gameMode = 0;
+                    if (receive.joinable())
+                        receive.join();
+                    delete client;
+                    client = nullptr;
+                    loadMenu(gui, "Stalemate!\n Its draw.");
+                }
+            }
+
+
+
+            return true;
+            
         }
-
-
-
-        return true;
     }
     return false;
+}
+
+void botMove() {
+    std::vector<globalMove> consideredMoves = getAllMoves();
+
+    int move = rand() % consideredMoves.size();
+
+    sf::Vector2i from(consideredMoves[move].fromX, consideredMoves[move].fromY);
+    sf::Vector2i to(consideredMoves[move].x, consideredMoves[move].y);
+
+
+    selectPiece(from);
+    processStep(from, to);
 }
 
 void draw() {
@@ -625,9 +647,14 @@ int main()
 
                         if (playerColor == currentTurn) {
                             if (moveFrom.x != -1 and moveFrom.y != -1) {
+                                std::cout << "selected position";
                                 if (processStep(moveFrom, selectedPos)) {
+                                    std::cout << "selected position 2";
                                     selectedPos = sf::Vector2i(-1, -1);
                                     moveFrom = sf::Vector2i(-1, -1);
+                                    if (gameMode == 3) {
+                                        botMove();
+                                    }
                                 }
                                 else {
                                     possibleMoves = {};
