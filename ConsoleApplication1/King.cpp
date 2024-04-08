@@ -86,11 +86,11 @@ void King::AfterMove(std::array<std::array<int, 8>, 8>& board, possibleMove move
         bool color = board[move.y][move.x] > 0;
         if (move.x == 2)
         {
-            board[color ? 7 : 0][move.x + 1] = (color ? 1 : -1);
+            board[color ? 7 : 0][move.x + 1] = (color ? 5 : -5);
             board[color ? 7 : 0][move.x - 2] = 0;
         }
         else if (move.x == 6) {
-            board[color ? 7 : 0][move.x - 1] = (color ? 1 : -1);
+            board[color ? 7 : 0][move.x - 1] = (color ? 5 : -5);
             board[color ? 7 : 0][move.x + 1] = 0;
         }
     }

@@ -24,7 +24,7 @@ std::vector<possibleMove> Pawn::GetPossibleMoves(std::array<std::array<int, 8>, 
         //right attack move
         if (x + 1 < 8) {
             int attackRightSquare = board[y + (color ? -1 : 1)][x + 1];
-            if (attackRightSquare and color ? attackRightSquare < 0 : attackRightSquare > 0 or onlyAttack) {
+            if ((attackRightSquare and color ? attackRightSquare < 0 : attackRightSquare > 0) or onlyAttack) {
                 if (y + (color ? -1 : 1) == (color ? 0 : 7)) {
                     squareUnderAttack.push_back({ x + 1, y + (color ? -1 : 1), PROMOTION });
                 }
@@ -37,7 +37,7 @@ std::vector<possibleMove> Pawn::GetPossibleMoves(std::array<std::array<int, 8>, 
         //left attack move
         if (x - 1 > -1) {
             int attackLeftSquare = board[y + (color ? -1 : 1)][x - 1];
-            if (attackLeftSquare and color ? attackLeftSquare < 0 : attackLeftSquare > 0 or onlyAttack) {
+            if ((attackLeftSquare and color ? attackLeftSquare < 0 : attackLeftSquare > 0) or onlyAttack) {
                 if (y + (color ? -1 : 1) == (color ? 0 : 7)) {
                     squareUnderAttack.push_back({ x - 1, y + (color ? -1 : 1), PROMOTION });
                 }
@@ -73,7 +73,7 @@ std::vector<possibleMove> Pawn::GetPossibleMoves(std::array<std::array<int, 8>, 
         //En passant right
         int enPassantRight = board[y][x + 1];
         //if last opponent move was pawn move
-        if (enPassantRight == color ? -6 : 6) {
+        if (enPassantRight == color ? -1 : 1) {
             std::string lastMove = moves.rfind(" | ") != -1 ? moves.substr(moves.rfind(" | "), moves.size()) : moves;
             if (lastMove.size() >= 3)
                 lastMove = lastMove.replace(0, 3, "");
@@ -92,7 +92,7 @@ std::vector<possibleMove> Pawn::GetPossibleMoves(std::array<std::array<int, 8>, 
     //if have free space on left side
     if (x - 1 > -1) { 
         int enPassantLeft = board[y][x - 1];
-        if (enPassantLeft == color ? -6 : 6) {
+        if (enPassantLeft == color ? -1 : 1) {
             std::string lastMove = moves.rfind(" | ") != -1 ? moves.substr(moves.rfind(" | "), moves.size()) : moves;
             if (lastMove.size() >= 3)
                 lastMove = lastMove.replace(0, 3, "");
@@ -119,7 +119,7 @@ void Pawn::AfterMove(std::array<std::array<int, 8>, 8>& board, possibleMove move
     }
     if (move.moveType == PROMOTION) {
         bool color = board[move.y][move.x] > 0;
-        board[move.y][move.x] = color? 4 : -4;
+        board[move.y][move.x] = color? 9 : -9;
         std::cout << "Pawn Promotion" << "\n";
     }
 
