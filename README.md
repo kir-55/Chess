@@ -1,4 +1,6 @@
 # Game of chess in C++
-![image](https://github.com/kir-55/Chess/assets/56845325/6b885a69-f9ce-42fa-986d-af6160d6d635)
+![image](https://github.com/kir-55/Chess/assets/56845325/192d9f1f-22d5-4126-a576-d472c76c3245)
 
-![image](https://github.com/kir-55/Chess/assets/56845325/6b7e85a9-d181-4630-a7f2-8e06ddc06a7f)
+![image](https://github.com/kir-55/Chess/assets/56845325/400c8c7a-253d-4c6c-addb-af2a8c736242)
+
+![image](https://github.com/kir-55/Chess/assets/56845325/d4955215-3f73-460c-b757-e644a1e9df45)
