@@ -138,6 +138,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bot.cpp" />
     <ClCompile Include="Chess.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="King.cpp" />
@@ -145,11 +146,18 @@
     <ClCompile Include="Piece.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bot.h" />
     <ClInclude Include="ChessConstants.h" />
+    <ClInclude Include="ChessMethods.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="King.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="Piece.h" />
+    <ClInclude Include="Moves.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Chess.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

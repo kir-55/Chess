@@ -1,6 +1,4 @@
-﻿#define LOG(x) std::cout << x << std::endl;
-
-#include <stdlib.h> 
+﻿#include <stdlib.h> 
 #include <vector>
 #include <array>
 #include <string>
@@ -11,22 +9,9 @@
 #include <TGUI/TGUI.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <enet/enet.h>
-#include "Piece.h"
-#include "Pawn.h"
-#include "King.h"
 #include "ChessConstants.h"
+#include "Moves.h"
 #include "Client.h"
-
-
-
-struct globalMove : public possibleMove {
-    int fromX;
-    int fromY;
-};
-
-struct moveValue : public globalMove {
-    float value;
-};
 
 void loadMenu(tgui::BackendGui& gui, std::string message = "");
 
@@ -42,7 +27,7 @@ bool playerColor = false;
 
 bool firstDraw = true;
 bool check = false;
-bool developerMode = true;
+bool developerMode = false;
 int selectedPiece;
 int squareSize = 100;
 
@@ -371,7 +356,7 @@ void play(tgui::EditBox::Ptr username, int mode)
         gameMode = mode;
         chessboard = initialChessboard;
         currentTurn = true;
-        playerColor = false;
+        playerColor = true;
         possibleMoves = {};
         movesNotation = "";
         check = false;
@@ -514,6 +499,14 @@ bool processStep(sf::Vector2i from, sf::Vector2i to) {
 }
 
 void botMove() {
+
+    /* bot needs:
+    - whiteAttackMap
+    - blackAttackMap
+    - board
+    -...
+    */
+    
     std::array<std::array<int, 8>, 8> playerAttackMap = getAttackMap(chessboard, currentTurn, movesNotation);
     std::array<std::array<int, 8>, 8> botAttackMap = getAttackMap(chessboard, !currentTurn, movesNotation);
     
@@ -545,11 +538,15 @@ void botMove() {
             if (playerAttackMap[mv.y][mv.x] > 0)
             {
                 mv.value += abs(chessboard[mv.y][mv.x]) - pieceId;
+                std::cout << "considering taking with piece: " << pieceId << std::endl;
                 std::cout << "profit of taking: " << abs(chessboard[mv.y][mv.x]) - pieceId << std::endl;
                 std::cout << "value after taking: " << mv.value << std::endl;
             }   
             else
                 mv.value += abs(chessboard[mv.y][mv.x]);
+        }
+        else {
+            mv.value += (playerAttackMap[mv.fromY][mv.fromX] - playerAttackMap[mv.y][mv.x]) * pieceId * 0.1;
         }
         std::string vrtMoveNotation = movesNotation + " | " + movePiece(m, vrtualBoard);
         
@@ -570,7 +567,7 @@ void botMove() {
         sf::Vector2i kingPosition = getKingPos(!currentTurn, chessboard);
 
         if (checkForCheck(kingPosition, vrtualBotAttackMap) and playerAttackMap[mv.y][mv.x] == 0) {
-            mv.value += 4;
+            mv.value += 0.9;
         }
 
             
@@ -588,7 +585,7 @@ void botMove() {
 
         
         
-        mv.value += (playerAttackMap[mv.fromY][mv.fromX] - playerAttackMap[mv.y][mv.x])*pieceId;
+        
 
         consideredMoves.push_back(mv);
     }

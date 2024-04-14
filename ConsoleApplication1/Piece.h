@@ -4,20 +4,8 @@
 #include <vector>
 #include <array>
 #include <string>
+#include "Moves.h"
 
-enum MoveType {
-    MOVE,
-    CAPTURE,
-    EN_PASSANT,
-    CASTLE,
-    PROMOTION
-};
-
-struct possibleMove {
-    int x;
-    int y;
-    MoveType moveType;
-};
 
 class Piece
 {
