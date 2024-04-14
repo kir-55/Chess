@@ -111,13 +111,13 @@ std::vector<possibleMove> Pawn::GetPossibleMoves(std::array<std::array<int, 8>, 
 void Pawn::AfterMove(std::array<std::array<int, 8>, 8>& board, possibleMove move)
 {
     if (move.moveType == EN_PASSANT) {
-        bool color = board[move.y][move.x] > 0;
-        board[move.y + (color ? 1 : -1)][move.x] = 0;
+        bool color = board[move.to.y][move.to.x] > 0;
+        board[move.to.y + (color ? 1 : -1)][move.to.x] = 0;
         std::cout << "En Passant" << "\n";
     }
     if (move.moveType == PROMOTION) {
-        bool color = board[move.y][move.x] > 0;
-        board[move.y][move.x] = color? 9 : -9;
+        bool color = board[move.to.y][move.to.x] > 0;
+        board[move.to.y][move.to.x] = color? 9 : -9;
         std::cout << "Pawn Promotion" << "\n";
     }
 

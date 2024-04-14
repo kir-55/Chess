@@ -9,15 +9,18 @@ enum MoveType {
     PROMOTION
 };
 
-struct possibleMove {
+struct position {
     int x;
     int y;
+};
+
+struct possibleMove {
+    position to;
     MoveType moveType;
 };
 
 struct globalMove : public possibleMove {
-    int fromX;
-    int fromY;
+    position from;
 };
 
 struct moveValue : public globalMove {

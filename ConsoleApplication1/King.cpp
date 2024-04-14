@@ -83,15 +83,15 @@ std::vector<possibleMove> King::GetPossibleMoves(std::array<std::array<int, 8>, 
 void King::AfterMove(std::array<std::array<int, 8>, 8>& board, possibleMove move)
 {
     if (move.moveType == CASTLE) {
-        bool color = board[move.y][move.x] > 0;
-        if (move.x == 2)
+        bool color = board[move.to.y][move.to.x] > 0;
+        if (move.to.x == 2)
         {
-            board[color ? 7 : 0][move.x + 1] = (color ? 5 : -5);
-            board[color ? 7 : 0][move.x - 2] = 0;
+            board[color ? 7 : 0][move.to.x + 1] = (color ? 5 : -5);
+            board[color ? 7 : 0][move.to.x - 2] = 0;
         }
-        else if (move.x == 6) {
-            board[color ? 7 : 0][move.x - 1] = (color ? 5 : -5);
-            board[color ? 7 : 0][move.x + 1] = 0;
+        else if (move.to.x == 6) {
+            board[color ? 7 : 0][move.to.x - 1] = (color ? 5 : -5);
+            board[color ? 7 : 0][move.to.x + 1] = 0;
         }
     }
 }

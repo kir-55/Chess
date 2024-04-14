@@ -140,6 +140,7 @@
   <ItemGroup>
     <ClCompile Include="Bot.cpp" />
     <ClCompile Include="Chess.cpp" />
+    <ClCompile Include="ChessMethods.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="King.cpp" />
     <ClCompile Include="Pawn.cpp" />

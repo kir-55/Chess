@@ -36,4 +36,14 @@ static Piece ROOK{ "rook", ROOK_WHITE, ROOK_BLACK, '+' ,{} };
 const std::string moveSeparator = "|";
 const std::array<char, 8> abc = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
 
+//to simplify piece's id's are the same as their value
+enum Pieces {
+    PAWN_ID = 1,
+    KNIGHT_ID = 3,
+    BISHOP_ID = 4, //bishop value is 4!
+    ROOK_ID = 5,
+    QUEEN_ID = 9,
+    KING_ID = 10
+};
+
 #endif
