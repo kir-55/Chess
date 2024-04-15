@@ -6,29 +6,29 @@ King::King(std::string name, std::string whiteSpriteName, std::string blackSprit
     
 }
 
-std::vector<possibleMove> King::GetPossibleMoves(std::array<std::array<int, 8>, 8> board, std::array<std::array<int, 8>, 8> attackMap, std::string moves, std::array<int, 2> position, bool onlyAttack)
+std::vector<possibleMove> King::GetPossibleMoves(std::array<std::array<int, 8>, 8> board, std::array<std::array<int, 8>, 8> attackMap, std::string moves, position pos, bool onlyAttack)
 {
 
-    int x = position[0];
-    int y = position[1];
+    int x = pos.x;
+    int y = pos.y;
 
     bool color = board[y][x] > 0;
 
     std::vector<possibleMove> squaresUnderAttack;
 
-    std::vector<std::array<int, 2>> localAttackSpots = { {0,1}, {1,0}, {-1, 0}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1} };
+    std::vector<position> localAttackSpots = { {0,1}, {1,0}, {-1, 0}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1} };
 
     //normal movement
-    for (std::array<int, 2> attackSpot : localAttackSpots)
+    for (position attackSpot : localAttackSpots)
     {
-        //defining actual(global/world) position
-        color ? attackSpot = { position[0] - attackSpot[0], position[1] - attackSpot[1] } : attackSpot = { position[0] + attackSpot[0], position[1] + attackSpot[1] };
-        //check if position exists
-        if (attackSpot[0] > -1 and attackSpot[0] < 8 and attackSpot[1] > -1 and attackSpot[1] < 8)
+        //defining actual(global/world) pos
+        color ? attackSpot = { pos.x - attackSpot.x, pos.y - attackSpot.y } : attackSpot = { pos.x + attackSpot.x, pos.y + attackSpot.y };
+        //check if pos exists
+        if (attackSpot.x > -1 and attackSpot.x < 8 and attackSpot.y > -1 and attackSpot.y < 8)
         {
-            int piece = board[attackSpot[1]][attackSpot[0]];
+            int piece = board[attackSpot.y][attackSpot.x];
             if (piece == 0 or (color ? piece < 0 : piece > 0) or onlyAttack)
-                squaresUnderAttack.push_back({ attackSpot[0], attackSpot[1] });
+                squaresUnderAttack.push_back({ attackSpot.x, attackSpot.y });
         }
     }
     if (!onlyAttack) {
@@ -42,33 +42,33 @@ std::vector<possibleMove> King::GetPossibleMoves(std::array<std::array<int, 8>, 
 
             if (moves.find(leftRookMove) == std::string::npos) {
 
-                bool freeSpace = board[position[1]][position[0] - 1] == 0 and
-                                 board[position[1]][position[0] - 2] == 0 and
-                                 board[position[1]][position[0] - 3] == 0;
+                bool freeSpace = board[pos.y][pos.x - 1] == 0 and
+                                 board[pos.y][pos.x - 2] == 0 and
+                                 board[pos.y][pos.x - 3] == 0;
 
-                bool underAttack = attackMap[position[1]][position[0]] != 0 or
-                                   attackMap[position[1]][position[0] - 1] != 0 or
-                                   attackMap[position[1]][position[0] - 2] != 0;
+                bool underAttack = attackMap[pos.y][pos.x] != 0 or
+                                   attackMap[pos.y][pos.x - 1] != 0 or
+                                   attackMap[pos.y][pos.x - 2] != 0;
 
                 if (freeSpace and !underAttack) {
                     std::cout << (color ? "\nwhite" : "\nblack") << " left\n";
-                    squaresUnderAttack.push_back({ position[0] - 2, position[1], CASTLE });
+                    squaresUnderAttack.push_back({ pos.x - 2, pos.y, CASTLE });
                 }
 
             }
             if (moves.find(rightRookMove) == std::string::npos) {
-                bool freeSpace = board[position[1]][position[0] + 1] == 0 and
-                    board[position[1]][position[0] + 2] == 0;
+                bool freeSpace = board[pos.y][pos.x + 1] == 0 and
+                    board[pos.y][pos.x + 2] == 0;
 
-                bool underAttack = attackMap[position[1]][position[0]] != 0 or
-                                   attackMap[position[1]][position[0] + 1] != 0 or
-                                   attackMap[position[1]][position[0] + 2] != 0;
+                bool underAttack = attackMap[pos.y][pos.x] != 0 or
+                                   attackMap[pos.y][pos.x + 1] != 0 or
+                                   attackMap[pos.y][pos.x + 2] != 0;
 
 
-                std::cout << (color ? "\nwhite" : "\nblack") << " +1: (" << board[position[1]][position[0] + 1] << "), +2: (" << board[position[1]][position[0] + 2] << ")";
+                std::cout << (color ? "\nwhite" : "\nblack") << " +1: (" << board[pos.y][pos.x + 1] << "), +2: (" << board[pos.y][pos.x + 2] << ")";
                 if (freeSpace and !underAttack) {
                     std::cout << (color ? "\nwhite" : "\nblack") << " right\n";
-                    squaresUnderAttack.push_back({ position[0] + 2, position[1], CASTLE });
+                    squaresUnderAttack.push_back({ pos.x + 2, pos.y, CASTLE });
                 }
 
             }

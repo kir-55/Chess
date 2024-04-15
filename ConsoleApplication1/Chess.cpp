@@ -13,8 +13,12 @@
 #include "ChessMethods.h"
 #include "Moves.h"
 #include "Client.h"
+#include "Bot.h"
 
 void loadMenu(tgui::BackendGui& gui, std::string message = "");
+
+globalMove lastMove = {};
+
 
 std::vector<possibleMove> possibleMoves;
 std::array<std::array<int, 8>, 8> attackMap, botGlobalAttackMap;
@@ -43,6 +47,7 @@ int gameMode = 0;
 Client* client = nullptr;
 std::thread receive;
 
+Bot Ridrisch = Bot("ridrisch");
 
 tgui::Theme GUITheme{ CONTENT_PATH + "Theme.txt" };
 
@@ -109,7 +114,7 @@ void selectPiece(position pos) {
     int pieceId = getPiece(pos, chessboard);
     if (pieceId != 0 and currentTurn ? pieceId > 0:pieceId < 0) {
         selectedPiece = pieceId;
-        possibleMoves = getSafeMoves(chessboard, getPiece(abs(pieceId)).GetPossibleMoves(chessboard, attackMap, movesNotation, std::array<int, 2>{pos.x, pos.y}), pos, currentTurn, movesNotation);
+        possibleMoves = getSafeMoves(chessboard, getPiece(abs(pieceId)).GetPossibleMoves(chessboard, attackMap, movesNotation, pos), pos, currentTurn, movesNotation);
     }
     else {
         possibleMoves = {};
@@ -201,10 +206,11 @@ void play(tgui::EditBox::Ptr username, int mode)
     if (u_name != "") {
         gui.removeAllWidgets();
         std::cout << "logged as: " << u_name;
+        lastMove.from = position{ -1, -1 };
         gameMode = mode;
         chessboard = initialChessboard;
         currentTurn = true;
-        playerColor = true;
+        playerColor = false;
         possibleMoves = {};
         movesNotation = "";
         check = false;
@@ -298,6 +304,8 @@ bool processStep(position from, position to) {
             currentTurn = !currentTurn;
             possibleMoves = {};
 
+            lastMove = g;
+
             if (gameMode == 1)
                 playerColor = currentTurn;
 
@@ -343,8 +351,6 @@ bool processStep(position from, position to) {
                 }
             }
 
-
-
             return true;
             
         }
@@ -354,117 +360,11 @@ bool processStep(position from, position to) {
 //to be chagned: sf::Vector2i --> position
 
 void botMove() {
+    
 
-    /* bot needs:
-    - whiteAttackMap
-    - blackAttackMap
-    - board
-    -...
-    */
-
-    std::array<std::array<int, 8>, 8> playerAttackMap = getAttackMap(chessboard, currentTurn, movesNotation);
-    std::array<std::array<int, 8>, 8> botAttackMap = getAttackMap(chessboard, !currentTurn, movesNotation);
-
-    std::array<std::array<int, 8>, 8> vrtualBotAttackMap;
-
-    std::vector<globalMove> moves = getAllMoves(chessboard, playerAttackMap, currentTurn, movesNotation);
-    std::vector<moveValue> consideredMoves;
-
-    int move = rand() % moves.size();
-
-    for (const auto m : moves) {
-        std::array<std::array<int, 8>, 8> vrtualBoard = chessboard;
-
-        moveValue mv;
-        mv.from.x = m.from.x;
-        mv.from.y = m.from.y;
-        mv.to.x = m.to.x;
-        mv.to.y = m.to.y;
-        mv.moveType = m.moveType;
-        mv.value = 0;
-
-        int pieceId = abs(chessboard[mv.from.y][mv.from.x]);
-
-        if (mv.moveType == PROMOTION and playerAttackMap[mv.to.y][mv.to.x] == 0)
-            mv.value += 8;
-        else if (mv.moveType == CASTLE)
-            mv.value++;
-        else if (mv.moveType == CAPTURE) {
-            if (playerAttackMap[mv.to.y][mv.to.x] > 0)
-            {
-                mv.value += abs(chessboard[mv.to.y][mv.to.x]) - pieceId;
-                std::cout << "considering taking with piece: " << pieceId << std::endl;
-                std::cout << "profit of taking: " << abs(chessboard[mv.to.y][mv.to.x]) - pieceId << std::endl;
-                std::cout << "value after taking: " << mv.value << std::endl;
-            }
-            else
-                mv.value += abs(chessboard[mv.to.y][mv.to.x]);
-        }
-        else {
-            mv.value += (playerAttackMap[mv.from.y][mv.from.x] - playerAttackMap[mv.to.y][mv.to.x]) * pieceId * 0.1;
-        }
-        movePiece(m, vrtualBoard);
-
-
-        std::string vrtMoveNotation = movesNotation + " | " + moveToString(m);
-
-        vrtualBotAttackMap = getAttackMap(vrtualBoard, !currentTurn, vrtMoveNotation);
-
-        float attackSum = 0, vrtAttackSum = 0;
-        for (int y = 0; y < 8; y++) {
-            for (int x = 0; x < 8; x++) {
-                attackSum += botAttackMap[y][x];//botAttackMap[y][x] * (abs(x - 3.5)) * abs(x - 3.5)
-                vrtAttackSum += vrtualBotAttackMap[y][x];
-            }
-        }
-        //if (vrtAttackSum > attackSum)
-       // {
-        std::cout << "agresive style: " << (vrtAttackSum - attackSum) * 0.02 << std::endl;
-        mv.value += (vrtAttackSum - attackSum) * 0.02;
-        //}
-        position kingPosition = getKingPos(!currentTurn, chessboard);
-
-        if (checkForCheck(kingPosition, vrtualBotAttackMap) and playerAttackMap[mv.to.y][mv.to.x] == 0) {
-            mv.value += 0.9;
-        }
-
-        if (pieceId == 10)
-            mv.value -= 0.25;
-        else if (pieceId == 1)
-            mv.value += 0.11;
-        else if (pieceId == 3)
-            mv.value += 0.10;
-        else if (pieceId == 4)
-            mv.value += 0.10;
-
-        consideredMoves.push_back(mv);
-    }
-
-    float bestValue = -100;
-    for (int i = 0; i < consideredMoves.size(); i++) {
-        float value = consideredMoves[i].value;
-        if (value > bestValue) {
-            move = i;
-            bestValue = value;
-            std::cout << "bestValue: " << bestValue << "\n";
-        }
-
-    }
-
-    /* std::string vrtMoveNotation = movesNotation + " | " + movePiece(moves[move], vrtualBoard);
-     botGlobalAttackMap = getAttackMap(vrtualBoard, !currentTurn, vrtMoveNotation);
-     sf::Vector2i kingPosition = getKingPos(!currentTurn, chessboard);
-     if(checkForCheck(kingPosition, botGlobalAttackMap) and playerAttackMap[moves[move].y][moves[move].x] == 0)
-     std::cout << "!!!final check!!!" << std::endl;*/
-
-    position from{ consideredMoves[move].from.x, consideredMoves[move].from.y };
-    position to{consideredMoves[move].to.x, consideredMoves[move].to.y};
-
-    std::cout << std::endl << "final move from: {x:" << from.x << "} {y:" << from.y << "}" << std::endl;
-    std::cout << "final move to: {x:" << to.x << "} {y:" << to.y << "}" << std::endl;
-    std::cout << "final value: " << consideredMoves[move].value << std::endl;
-    selectPiece(from);
-    processStep(from, to);
+    globalMove move = Ridrisch.FindMove(chessboard, movesNotation, currentTurn);
+    selectPiece(move.from);
+    processStep(move.from, move.to);
 }
 
 void draw() {
@@ -490,6 +390,14 @@ void draw() {
         drawSquare(position, sf::Color(114, 191, 137, 100));
     }
 
+    if (lastMove.from.x != -1)//weak code /XD what a cringe/
+    {
+        sf::Vector2i position = playerColor ? sf::Vector2i(lastMove.to.x, lastMove.to.y) : sf::Vector2i(7 - lastMove.to.x, 7 - lastMove.to.y);
+        drawSquare(position, sf::Color(255, 215, 0, 200));
+
+        position = playerColor ? sf::Vector2i(lastMove.from.x, lastMove.from.y) : sf::Vector2i(7 - lastMove.from.x, 7 - lastMove.from.y);
+        drawSquare(position, sf::Color(255, 215, 0, 100));
+    }
 
     for (possibleMove possibleMove : possibleMoves) {
         sf::Vector2i position = playerColor ? sf::Vector2i(possibleMove.to.x, possibleMove.to.y)
@@ -604,6 +512,7 @@ int main()
                                     //std::cout << "selected position 2";
                                     selectedPos = sf::Vector2i(-1, -1);
                                     moveFrom = sf::Vector2i(-1, -1);
+                                    draw();
                                     if (gameMode == 3) {
                                         botMove();
                                     }

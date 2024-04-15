@@ -62,13 +62,14 @@ std::string moveToString(globalMove globalMove) {
     + " "  + std::string(1, abc[globalMove.to.x])   + std::to_string(globalMove.to.y + 1);
 }
 
+
 std::array<std::array<int, 8>, 8> getAttackMap(std::array<std::array<int, 8>, 8> board, bool color, std::string moves) {
     std::array<std::array<int, 8>, 8> attackMap = std::array<std::array<int, 8>, 8>();
     for (int y = 0; y < 8; y++) {
         for (int x = 0; x < 8; x++) {
             int currSquare = board[y][x];
             if (color ? currSquare < 0 : currSquare>0) {
-                std::vector<possibleMove> attackedSquares = getPiece(abs(currSquare)).GetPossibleMoves(board, attackMap, moves, { {x,y} }, true);
+                std::vector<possibleMove> attackedSquares = getPiece(abs(currSquare)).GetPossibleMoves(board, attackMap, moves, { x,y }, true);
                 for (possibleMove possibleMove : attackedSquares) {
                     attackMap[possibleMove.to.y][possibleMove.to.x] += 1;
                 }
@@ -106,7 +107,7 @@ std::vector<globalMove> getAllMoves(std::array<std::array<int, 8>, 8> board, std
         for (int x = 0; x < 8; x++) {
             int currSquare = board[y][x];
             if (color ? currSquare > 0 : currSquare < 0) {
-                std::vector<possibleMove> pMoves = getSafeMoves(board, getPiece(abs(currSquare)).GetPossibleMoves(board, attackMap, movesNotation, std::array<int, 2>{ x, y }), position{ x, y }, color, movesNotation);
+                std::vector<possibleMove> pMoves = getSafeMoves(board, getPiece(abs(currSquare)).GetPossibleMoves(board, attackMap, movesNotation, { x, y }), { x, y }, color, movesNotation);
                 for (const auto pMove : pMoves) {
                     globalMove g;
                     g.from.x = x;
